@@ -38,3 +38,33 @@ app.listen(port, () => {
 app.get('/', (req, res) => {
   res.json('백엔드 서버 정상 동작중...');
 });
+
+//meetup테이블 데이터 조회
+app.get('/meetup', (req, res) => {
+  connection.query('SELECT * FROM board_meetup', (err, results) => {
+    if (err) {
+      console.log('쿼리문 오류:', err);
+      return;
+    }
+    res.json(results);
+  })
+})
+
+app.get('/meetup/:bm_no', (req, res) => {
+  const bm_no = Number(req.params.bm_no);
+
+  connection.query('SELECT * FROM board_meetup WHERE bm_no = bm_no', [bm_no], (err, results) => {
+    if (err) {
+      console.log('조회 오류:', err);
+      res.status(500).json({ error: '데이터 조회 실패' })
+      return;
+    }
+    if (results.length == 0) {
+      res.status(404).json({ error: '해당자료가 존재하지 않습니다.' });
+      return;
+    }
+    res.json(results[0]);
+  }
+  )
+})
+
