@@ -39,6 +39,7 @@ app.get('/', (req, res) => {
   res.json('백엔드 서버 정상 동작중...');
 });
 
+
 //-------조회-------
 // commmunitylist 조회
 app.get('/communitylist', (req, res) => {
@@ -48,6 +49,60 @@ app.get('/communitylist', (req, res) => {
       res.status(500).json({ error: 'DB쿼리문 오류' });
       return;
     }
+  })
+})
+
+
+
+//meetup테이블 데이터 조회
+app.get('/meetup', (req, res) => {
+  connection.query('SELECT * FROM board_meetup', (err, results) => {
+    if (err) {
+      console.log('쿼리문 오류:', err);
+      return;
+    }
     res.json(results);
   })
 })
+
+
+
+
+app.get('/meetup/:bm_no', (req, res) => {
+  const bm_no = Number(req.params.bm_no);
+
+  connection.query('SELECT * FROM board_meetup WHERE bm_no = ?', [bm_no], (err, results) => {
+    if (err) {
+      console.log('조회 오류:', err);
+      res.status(500).json({ error: '데이터 조회 실패' })
+      return;
+    }
+    if (results.length == 0) {
+      res.status(404).json({ error: '해당자료가 존재하지 않습니다.' });
+      return;
+    }
+    res.json(results[0]);
+  }
+  )
+})
+
+//meetup 게시글 등록하기
+app.post('/meetup', (req, res) => {
+  const { bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all } = req.body;
+  // if (!bm_m_res || !bm_title || !bm_desc || !bm_m_date || !bm_m_people_all) {
+  //   return res.status(400).json({ error: '필수항목누락' })
+  // }
+  connection.query(
+    'INSERT INTO board_meetup ( bm_board_cate,  bm_user_no, bm_m_res,bm_title,bm_desc,bm_m_date,bm_m_people_all) VALUES (?,?,?,?,?,?,?)', ['meetup', 1, bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all],
+    (err, results) => {
+      if (err) {
+        console.log('등록오류:', err);
+        res.status(500).json({ error: '데이터 등록 실패' });
+        return;
+      }
+      res.json({ success: true, insertId: results.insertId })
+    }
+  );
+});
+
+
