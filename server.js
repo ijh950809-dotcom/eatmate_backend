@@ -38,3 +38,16 @@ app.listen(port, () => {
 app.get('/', (req, res) => {
   res.json('백엔드 서버 정상 동작중...');
 });
+
+//-------조회-------
+// commmunitylist 조회
+app.get('/communitylist', (req, res) => {
+  connection.query('SELECT board_community.*, users.* FROM board_community INNER JOIN users ON board_community.bc_user_no = users.u_no ORDER BY board_community.bc_no DESC;', (err, results) => {
+    if (err) {
+      console.log('쿼리문 오류 : ', err);
+      res.status(500).json({ error: 'DB쿼리문 오류' });
+      return;
+    }
+    res.json(results);
+  })
+})
