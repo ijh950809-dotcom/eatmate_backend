@@ -37,5 +37,20 @@ router.get('/community/detail/:bc_no', (req, res) => {
     }
   )
 })
+// 댓글 작업중 문제적여자
+router.post('/community/detail/chat', (req, res) => {
+  const { ct_board_cate, ct_board_no } = req.body;
+  connection.query(
+    `SELECT * FROM comment WHERE ct_board_cate = ? AND ct_board_no = ?`,
+    [ct_board_cate, ct_board_no],
+    (err, results) => {
+      if (err) {
+        console.log('조회 오류 : ', err);
+        return res.status(500).json({ error: '조회 실패' });
+      }
+      return res.json(results);
+    }
+  )
+})
 
 module.exports = router;
