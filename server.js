@@ -1,18 +1,17 @@
-const express = require('express'); //express 기본 라우팅
-const app = express(); //express 기본 라우팅
+const express = require('express'); // express 기본 라우팅
+const app = express(); // express 기본 라우팅
 const port = 9070;
-const bcrypt = require('bcrypt');//해시암호화
-const jwt = require('jsonwebtoken');//인증토큰
-//const SECRET_KEY = '';//jwt 서명용 비밀키
+const bcrypt = require('bcrypt'); // 해시암호화
+const jwt = require('jsonwebtoken'); // 인증토큰
+const SECRET_KEY = ''; // jwt 서명용 비밀키
 
 const cors = require('cors');
 app.use(cors());
 
-//모든요청 (post, put, patch)에 대해 공통적용
-app.use(express.json());//JSON 본문 파싱 미들웨어
+// 모든요청 (post, put, patch)에 대해 공통적용
+app.use(express.json()); // JSON 본문 파싱 미들웨어
 
-
-const mysql = require('mysql'); //추가부분 //또는 require('mysql2');
+const mysql = require('mysql'); // 추가부분 //또는 require('mysql2');
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -21,7 +20,7 @@ const connection = mysql.createConnection({
   database: 'eatmate'
 });
 
-//MYSQL 서버 접속 오류가 있다면 오류 메세지 띄우기
+// MYSQL 서버 접속 오류가 있다면 오류 메세지 띄우기
 connection.connect((err) => {
   if (err) {
     console.log('MYSQL 연결 실패 :', err);
@@ -34,14 +33,13 @@ app.listen(port, () => {
   console.log('Listening...');
 });
 
-
+// 테스트
 app.get('/', (req, res) => {
-  res.json('백엔드 서버 정상 동작중...');
+  res.send('OK');
 });
 
-
-//-------조회-------
-// commmunitylist 조회
+/*** 자유게시판 commmunity ***/
+// 목록 조회
 app.get('/communitylist', (req, res) => {
   connection.query('SELECT board_community.*, users.* FROM board_community INNER JOIN users ON board_community.bc_user_no = users.u_no ORDER BY board_community.bc_no DESC;', (err, results) => {
     if (err) {
@@ -49,12 +47,13 @@ app.get('/communitylist', (req, res) => {
       res.status(500).json({ error: 'DB쿼리문 오류' });
       return;
     }
+
+    res.json(results);
   })
 })
 
-
-
-//meetup테이블 데이터 조회
+/*** 맛집 탐방 meetup ***/
+// 목록 조회
 app.get('/meetup', (req, res) => {
   connection.query('SELECT * FROM board_meetup', (err, results) => {
     if (err) {
@@ -65,9 +64,7 @@ app.get('/meetup', (req, res) => {
   })
 })
 
-
-
-
+// 상세 조회
 app.get('/meetup/:bm_no', (req, res) => {
   const bm_no = Number(req.params.bm_no);
 
@@ -86,7 +83,7 @@ app.get('/meetup/:bm_no', (req, res) => {
   )
 })
 
-//meetup 게시글 등록하기
+// 게시물 등록
 app.post('/meetup', (req, res) => {
   const { bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all } = req.body;
   // if (!bm_m_res || !bm_title || !bm_desc || !bm_m_date || !bm_m_people_all) {
@@ -105,4 +102,17 @@ app.post('/meetup', (req, res) => {
   );
 });
 
-
+/*** 맛집 리뷰 review ***/
+// 목록 조회
+app.get('/review', (req, res) => {
+  connection.query(
+    'SELECT * FROM board_review ORDER BY br_no DESC',
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(result);
+    }
+  );
+});
