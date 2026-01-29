@@ -4,11 +4,14 @@ const connection = require('../config/db');
 // 맛집 리뷰 - 목록 조회 review
 router.get('/review', (req, res) => {
   connection.query(
-    'SELECT * FROM board_review ORDER BY br_no DESC',
+    `SELECT board_review.*, restaurant.rt_name, restaurant.rt_cate, restaurant.rt_location 
+            FROM board_review INNER JOIN restaurant 
+            ON board_review.br_rt_no = restaurant.rt_no
+            ORDER BY br_date DESC`,
     (err, result) => {
       if (err) {
         console.log(err);
-        return res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: 'db 조회 오류' });
       }
       res.json(result);
     }
