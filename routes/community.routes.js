@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const connection = require('../config/db');
 
-// 자유게시판 목록 조회
+// 자유게시판 게시글 목록 조회
 router.get('/communitylist', (req, res) => {
   const sql = `
     SELECT board_community.*, users.*
@@ -19,7 +19,7 @@ router.get('/communitylist', (req, res) => {
   });
 });
 
-// 자유게시판 상세 페이지 조회
+// 자유게시판 게시글 상세 페이지 조회
 router.get('/community/detail/:bc_no', (req, res) => {
   const bc_no = req.params.bc_no;
   connection.query(
@@ -37,7 +37,8 @@ router.get('/community/detail/:bc_no', (req, res) => {
     }
   )
 })
-// 댓글 작업중 문제적여자
+
+// 자유게시판 상세페이지 댓글 (작업중) 입력/출력
 router.post('/community/detail/chat', (req, res) => {
   const { ct_board_cate, ct_board_no } = req.body;
   connection.query(
@@ -52,5 +53,27 @@ router.post('/community/detail/chat', (req, res) => {
     }
   )
 })
+
+// 자유게시판 게시글 작성 (입력)
+router.post('/writecommunity', (req, res) =>{
+  const { bc_user_no, bc_title, bc_desc } = req.body;
+  if (!bc_title || !bc_desc) {
+    return res.status(400).json({error: '필수 항목이 누락되었습니다.' });
+  }
+  connection.query(
+    'INSERT INTO board_community ( bc_user_no, bc_title, bc_desc ) VALUES ( ?,?,? )',
+    [ bc_user_no, bc_title, bc_desc],
+    (err, result) =>{
+      if (err) {
+        console.log('등록오류 :', err);
+        res.status(500).json({ error: '글 등록 실패'});
+        return
+      }
+      res.json({ success: true, insertId: result.insertId });
+    }
+  );
+});
+
+
 
 module.exports = router;
