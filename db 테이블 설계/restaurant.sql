@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-01-28 09:52
+-- 생성 시간: 26-01-29 07:00
 -- 서버 버전: 10.4.32-MariaDB
 -- PHP 버전: 8.0.30
 
@@ -136,7 +136,10 @@ INSERT INTO `restaurant` (`rt_no`, `rt_img`, `rt_img2`, `rt_img3`, `rt_img4`, `r
 (87, 'rt87.jpg', NULL, NULL, NULL, NULL, '홈쿠킹샵', '가정식 스타일', 4.0, 19, '기타', '서울시 은평구 불광동', '02-9000-0007', NULL, '2026-01-27 11:53:47'),
 (88, 'rt88.jpg', NULL, NULL, NULL, NULL, '무국적식당', '퓨전 음식', 4.2, 24, '기타', '서울시 성남시 분당', '031-9000-0008', NULL, '2026-01-27 11:53:47'),
 (89, 'rt89.jpg', NULL, NULL, NULL, NULL, '푸드라운지', '복합 음식 공간', 4.5, 44, '기타', '서울시 송파구 석촌', '02-9000-0009', NULL, '2026-01-27 11:53:47'),
-(90, 'rt90.jpg', NULL, NULL, NULL, NULL, '캐주얼다이닝', '편한 분위기 식당', 4.1, 28, '기타', '서울시 강동구 천호동', '02-9000-0010', NULL, '2026-01-27 11:53:47');
+(90, 'rt90.jpg', NULL, NULL, NULL, NULL, '캐주얼다이닝', '편한 분위기 식당', 4.1, 28, '기타', '서울시 강동구 천호동', '02-9000-0010', NULL, '2026-01-27 11:53:47'),
+(91, 'rt91.jpg', NULL, NULL, NULL, NULL, '정육식당 한우집', '한우 정육식당 스타일로 품질 좋은 고기와 다양한 곁들임을 즐길 수 있는 곳입니다.', 4.7, 0, '한식', '서울시 강남구 역삼동', '02-9100-0091', NULL, '2026-01-27 11:53:47'),
+(92, 'rt92.jpg', NULL, NULL, NULL, NULL, '야식 포장마차', '늦은 시간에도 간단한 안주와 야식을 즐길 수 있는 포장마차 감성의 맛집입니다.', 4.1, 0, '분식', '서울시 중구 명동', '02-9200-0092', NULL, '2026-01-27 11:53:47'),
+(93, 'rt93.jpg', NULL, NULL, NULL, NULL, '숯불구이 전문점', '숯불 향이 살아있는 고기구이를 메인으로 즐길 수 있는 구이 전문점입니다.', 4.6, 0, '한식', '서울시 성동구 성수동', '02-9300-0093', NULL, '2026-01-27 11:53:47');
 
 --
 -- 덤프된 테이블의 인덱스
@@ -156,7 +159,7 @@ ALTER TABLE `restaurant`
 -- 테이블의 AUTO_INCREMENT `restaurant`
 --
 ALTER TABLE `restaurant`
-  MODIFY `rt_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '맛집 번호', AUTO_INCREMENT=91;
+  MODIFY `rt_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '맛집 번호', AUTO_INCREMENT=94;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

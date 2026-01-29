@@ -38,22 +38,6 @@ router.get('/community/detail/:bc_no', (req, res) => {
   )
 })
 
-// 자유게시판 상세페이지 댓글 (작업중) 입력/출력
-router.post('/community/detail/chat', (req, res) => {
-  const { ct_board_cate, ct_board_no } = req.body;
-  connection.query(
-    `SELECT * FROM comment WHERE ct_board_cate = ? AND ct_board_no = ?`,
-    [ct_board_cate, ct_board_no],
-    (err, results) => {
-      if (err) {
-        console.log('조회 오류 : ', err);
-        return res.status(500).json({ error: '조회 실패' });
-      }
-      return res.json(results);
-    }
-  )
-})
-
 // 자유게시판 게시글 작성 (입력)
 router.post('/writecommunity', (req, res) =>{
   const { bc_user_no, bc_title, bc_desc } = req.body;
