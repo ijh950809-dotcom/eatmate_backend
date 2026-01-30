@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const connection = require('../config/db');
 
-// 맛집 리뷰 - 목록 조회 review
+// [맛집 리뷰 - 목록] 조회 review
 router.get('/review', (req, res) => {
   connection.query(
     `SELECT board_review.*, restaurant.rt_name, restaurant.rt_cate, restaurant.rt_location 
@@ -19,7 +19,29 @@ router.get('/review', (req, res) => {
   );
 });
 
-// 맛집 리뷰 - 상세 조회 review/detail
+// [맛집 - 상세] 조회 안에 있는 [맛집 리뷰 - 목록] 조회
+router.get('/review/:rt_no', (req, res) => {
+  const rt_no = req.params.rt_no;
+
+  connection.query(
+    `SELECT board_review.*, restaurant.rt_name, restaurant.rt_cate, restaurant.rt_location 
+    FROM board_review
+    INNER JOIN restaurant 
+      ON board_review.br_rt_no = restaurant.rt_no
+    WHERE rt_no = ?
+    ORDER BY br_date DESC`,
+    [rt_no],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'db 조회 오류' });
+      }
+      res.json(result);
+    }
+  );
+});
+
+// [맛집 리뷰 - 상세] 조회 review/detail
 router.post('/review/detail/:br_no', (req, res) => {
   const { br_no } = req.params;
 
@@ -39,13 +61,17 @@ router.post('/review/detail/:br_no', (req, res) => {
   );
 })
 
-// 맛집 - 목록 조회 review/restaurant
+// [맛집 - 목록] 조회 review/restaurant
 router.post('/restaurant', (req, res) => {
-  const { cate } = req.body;
+  const { category, filter } = req.body;
+  let orderBy = 'rt_rank DESC'
+
+  if (filter == 'review') orderBy = 'rt_review DESC';
+  if (filter == 'name') orderBy = 'rt_name';
 
   connection.query(
-    'SELECT * FROM restaurant WHERE rt_cate = ? ORDER BY rt_rank',
-    [cate],
+    `SELECT * FROM restaurant WHERE rt_cate = ? ORDER BY ${orderBy}`,
+    [category, filter],
     (err, result) => {
       if (err) {
         console.log('DB ERROR:', err);
@@ -56,7 +82,7 @@ router.post('/restaurant', (req, res) => {
   );
 });
 
-// 맛집 - 상세 조회 review/restaurant/detail
+// [맛집 - 상세] 조회 review/restaurant/detail
 router.get('/restaurant/detail/:rt_no', (req, res) => {
   const rt_no = req.params.rt_no;
 
@@ -69,6 +95,23 @@ router.get('/restaurant/detail/:rt_no', (req, res) => {
         return res.status(500).json({ error: err.message });
       }
       res.json(result[0]);
+    }
+  )
+})
+
+// [글쓰기 - 맛집 리뷰] write/review
+router.post('/wirte/review', (req, res) => {
+  const { br_user_no, br_rank, br_img, br_desc, br_rt_no } = req.body;
+
+  connection.query(
+    'INSERT INTO board_review(br_user_no, br_rank, br_img, br_desc, br_rt_no) VELUES(?, ?, ?, ?, ?)'
+    [br_user_no, br_rank, br_img, br_desc, br_rt_no],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: err.message })
+      }
+      // 여기부터 작업하면 됨
     }
   )
 })
