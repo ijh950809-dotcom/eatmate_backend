@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const connection = require('../config/db');
 
-// 맛집 리뷰 - 목록 조회 review
+// [맛집 리뷰 - 목록] 조회 review
 router.get('/review', (req, res) => {
   connection.query(
     `SELECT board_review.*, restaurant.rt_name, restaurant.rt_cate, restaurant.rt_location 
@@ -19,7 +19,29 @@ router.get('/review', (req, res) => {
   );
 });
 
-// 맛집 리뷰 - 상세 조회 review/detail
+// [맛집 - 상세] 조회 안에 있는 [맛집 리뷰 - 목록] 조회
+router.get('/review/:rt_no', (req, res) => {
+  const rt_no = req.params.rt_no;
+
+  connection.query(
+    `SELECT board_review.*, restaurant.rt_name, restaurant.rt_cate, restaurant.rt_location 
+    FROM board_review
+    INNER JOIN restaurant 
+      ON board_review.br_rt_no = restaurant.rt_no
+    WHERE rt_no = ?
+    ORDER BY br_date DESC`,
+    [rt_no],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'db 조회 오류' });
+      }
+      res.json(result);
+    }
+  );
+});
+
+// [맛집 리뷰 - 상세] 조회 review/detail
 router.post('/review/detail/:br_no', (req, res) => {
   const { br_no } = req.params;
 
@@ -39,7 +61,7 @@ router.post('/review/detail/:br_no', (req, res) => {
   );
 })
 
-// 맛집 - 목록 조회 review/restaurant
+// [맛집 - 목록] 조회 review/restaurant
 router.post('/restaurant', (req, res) => {
   const { category, filter } = req.body;
   let orderBy = 'rt_rank DESC'
@@ -60,7 +82,7 @@ router.post('/restaurant', (req, res) => {
   );
 });
 
-// 맛집 - 상세 조회 review/restaurant/detail
+// [맛집 - 상세] 조회 review/restaurant/detail
 router.get('/restaurant/detail/:rt_no', (req, res) => {
   const rt_no = req.params.rt_no;
 
