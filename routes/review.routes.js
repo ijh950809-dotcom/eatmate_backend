@@ -99,4 +99,21 @@ router.get('/restaurant/detail/:rt_no', (req, res) => {
   )
 })
 
+// [글쓰기 - 맛집 리뷰] write/review
+router.post('/wirte/review', (req, res) => {
+  const { br_user_no, br_rank, br_img, br_desc, br_rt_no } = req.body;
+
+  connection.query(
+    'INSERT INTO board_review(br_user_no, br_rank, br_img, br_desc, br_rt_no) VELUES(?, ?, ?, ?, ?)'
+    [br_user_no, br_rank, br_img, br_desc, br_rt_no],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: err.message })
+      }
+      // 여기부터 작업하면 됨
+    }
+  )
+})
+
 module.exports = router;
