@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-01-30 06:31
+-- 생성 시간: 26-01-30 07:03
 -- 서버 버전: 10.4.32-MariaDB
 -- PHP 버전: 8.0.30
 
@@ -44,7 +44,7 @@ CREATE TABLE `admin_user` (
 
 CREATE TABLE `board_community` (
   `bc_no` int(10) UNSIGNED NOT NULL COMMENT '자유게시판 게시글 번호',
-  `bc_board_cate` varchar(50) NOT NULL COMMENT '테이블명(카테고리)',
+  `bc_board_cate` varchar(50) NOT NULL DEFAULT 'community' COMMENT '테이블명(카테고리)',
   `bc_user_no` int(10) UNSIGNED NOT NULL COMMENT '회원 번호 (users.u_no)',
   `bc_title` varchar(200) NOT NULL COMMENT '제목',
   `bc_desc` text NOT NULL COMMENT '본문글',
@@ -72,7 +72,8 @@ INSERT INTO `board_community` (`bc_no`, `bc_board_cate`, `bc_user_no`, `bc_title
 (12, 'community', 2, '혼밥러의 하루', '오늘 혼밥 후기 남깁니다.', 2, 0, '2024-01-22 12:05:00'),
 (13, 'community', 3, '단골집 사장님 이야기', '단골집 사장님이 너무 친절하세요.', 5, 1, '2024-01-23 18:30:00'),
 (14, 'community', 4, '맛집 원정 다녀왔어요', '멀리 다녀왔지만 후회 없는 선택!', 9, 2, '2024-01-24 20:40:00'),
-(15, 'community', 5, '야식 고민 해결', '결국 치킨 먹었습니다.', 7, 1, '2024-01-25 23:55:00');
+(15, 'community', 5, '야식 고민 해결', '결국 치킨 먹었습니다.', 7, 1, '2024-01-25 23:55:00'),
+(16, 'community', 1, 'dfd', 'dfd', 0, 0, '2026-01-30 14:59:58');
 
 -- --------------------------------------------------------
 
@@ -82,7 +83,7 @@ INSERT INTO `board_community` (`bc_no`, `bc_board_cate`, `bc_user_no`, `bc_title
 
 CREATE TABLE `board_meetup` (
   `bm_no` int(10) UNSIGNED NOT NULL COMMENT '탐방 게시글 번호',
-  `bm_board_cate` varchar(50) NOT NULL COMMENT '테이블명(카테고리)',
+  `bm_board_cate` varchar(50) NOT NULL DEFAULT 'meetup' COMMENT '테이블명(카테고리)',
   `bm_user_no` int(10) UNSIGNED NOT NULL COMMENT '회원 번호 (users.u_no)',
   `bm_img` varchar(255) DEFAULT NULL COMMENT '대표 사진',
   `bm_img2` varchar(255) DEFAULT NULL COMMENT '서브 사진 1',
@@ -124,7 +125,7 @@ INSERT INTO `board_meetup` (`bm_no`, `bm_board_cate`, `bm_user_no`, `bm_img`, `b
 
 CREATE TABLE `board_review` (
   `br_no` int(10) UNSIGNED NOT NULL COMMENT '리뷰 게시글 번호',
-  `br_board_cate` varchar(50) NOT NULL COMMENT '테이블명(카테고리)',
+  `br_board_cate` varchar(50) NOT NULL DEFAULT 'review' COMMENT '테이블명(카테고리)',
   `br_user_no` int(10) UNSIGNED NOT NULL COMMENT '회원 번호 (users.u_no)',
   `br_rank` int(11) NOT NULL COMMENT '평점',
   `br_img` varchar(255) DEFAULT NULL COMMENT '대표 사진',
@@ -482,7 +483,7 @@ ALTER TABLE `admin_user`
 -- 테이블의 AUTO_INCREMENT `board_community`
 --
 ALTER TABLE `board_community`
-  MODIFY `bc_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '자유게시판 게시글 번호', AUTO_INCREMENT=16;
+  MODIFY `bc_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '자유게시판 게시글 번호', AUTO_INCREMENT=17;
 
 --
 -- 테이블의 AUTO_INCREMENT `board_meetup`

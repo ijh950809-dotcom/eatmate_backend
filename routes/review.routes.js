@@ -41,11 +41,15 @@ router.post('/review/detail/:br_no', (req, res) => {
 
 // 맛집 - 목록 조회 review/restaurant
 router.post('/restaurant', (req, res) => {
-  const { cate } = req.body;
+  const { category, filter } = req.body;
+  let orderBy = 'rt_rank DESC'
+
+  if (filter == 'review') orderBy = 'rt_review DESC';
+  if (filter == 'name') orderBy = 'rt_name';
 
   connection.query(
-    'SELECT * FROM restaurant WHERE rt_cate = ? ORDER BY rt_rank',
-    [cate],
+    `SELECT * FROM restaurant WHERE rt_cate = ? ORDER BY ${orderBy}`,
+    [category, filter],
     (err, result) => {
       if (err) {
         console.log('DB ERROR:', err);
