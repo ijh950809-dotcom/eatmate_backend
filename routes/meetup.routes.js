@@ -36,11 +36,21 @@ router.get('/meetup/:bm_no', (req, res) => {
 router.post('/meetup', (req, res) => {
   const { bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all } = req.body;
 
+  if (!bm_m_res || !bm_title || !bm_desc || !bm_m_date) {
+    return res.status(400).json({ error: '필수항목이 누락되었습니다.' });
+  }
+  const peopleAll = parseInt(bm_m_people_all)
+  if (
+    bm_m_people_all === '' || Number.isNaN(peopleAll) || peopleAll < 1
+  ) {
+    return res.status(400).json({ error: '필수항목이 누락되었습니다.' });
+  }
+
   connection.query(
     `INSERT INTO board_meetup
     (bm_board_cate, bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all)
     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    ['meetup', 1, bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all],
+    ['meetup', 1, bm_m_res, bm_title, bm_desc, bm_m_date, peopleAll],
     (err, results) => {
       if (err) {
         console.log('등록오류:', err);
