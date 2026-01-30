@@ -17,7 +17,7 @@ router.get('/meetup/:bm_no', (req, res) => {
   const bm_no = Number(req.params.bm_no);
 
   connection.query(
-    'SELECT board_meetup.*, users.u_nick, users.u_pic FROM board_meetup INNER JOIN users ON board_meetup.bm_user_no = users.u_no WHERE bm_no = ?',
+    'SELECT * FROM board_meetup WHERE bm_no = ?',
     [bm_no],
     (err, results) => {
       if (err) {
@@ -50,17 +50,5 @@ router.post('/meetup', (req, res) => {
     }
   );
 });
-
-// router.get('/users', (req, res) => {
-//   connection.query("SELECT users.u_nick FROM users INNER JOIN board_meetup ON users.u_no = board_meetup.bm_user_no", (err, result) => {
-//     if (err) {
-//       console.log('쿼리문 오류 :', err);
-//       return;
-//     }
-//     //json 데이터로 결과를 저장
-//     res.json(result);
-//   })
-// });
-
 
 module.exports = router;
