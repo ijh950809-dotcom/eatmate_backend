@@ -1,4 +1,7 @@
 const router = require('express').Router();
+const multer = require('multer');
+const path = require('path');
+
 const connection = require('../config/db');
 
 // [맛집 리뷰 - 목록] 조회 review
@@ -12,7 +15,7 @@ router.get('/review', (req, res) => {
     (err, result) => {
       if (err) {
         console.log(err);
-        return res.status(500).json({ error: 'db 조회 오류' });
+        return res.status(500).json({ error: 'DB 조회 오류' });
       }
       res.json(result);
     }
@@ -34,7 +37,7 @@ router.get('/review/:rt_no', (req, res) => {
     (err, result) => {
       if (err) {
         console.log(err);
-        return res.status(500).json({ error: 'db 조회 오류' });
+        return res.status(500).json({ error: 'DB 조회 오류' });
       }
       res.json(result);
     }
@@ -55,7 +58,7 @@ router.post('/review/detail/:br_no', (req, res) => {
     WHERE board_review.br_no = ?`,
     [br_no],
     (err, result) => {
-      if (err) return res.status(500).json({ error: 'db 조회 오류' });
+      if (err) return res.status(500).json({ error: 'DB 조회 오류' });
       res.json(result[0]);
     }
   );
@@ -75,7 +78,7 @@ router.post('/restaurant', (req, res) => {
     (err, result) => {
       if (err) {
         console.log('DB ERROR:', err);
-        return res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: 'DB 조회 오류' });
       }
       res.json(result);
     }
@@ -92,26 +95,48 @@ router.get('/restaurant/detail/:rt_no', (req, res) => {
     (err, result) => {
       if (err) {
         console.log('DB ERROR:', err);
-        return res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: 'DB 조회 오류' });
       }
       res.json(result[0]);
     }
   )
 })
 
+// 업로드 저장 위치/파일명 설정
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/review'),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `review_${Date.now()}${ext}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('이미지 파일만 업로드 가능합니다.'));
+    }
+    cb(null, true);
+  },
+});
+
 // [글쓰기 - 맛집 리뷰] write/review
-router.post('/wirte/review', (req, res) => {
-  const { br_user_no, br_rank, br_img, br_desc, br_rt_no } = req.body;
+router.post('/write/review', upload.single('br_img'), (req, res) => {
+  const { br_user_no, br_rank, br_desc, br_rt_no } = req.body;
+  const br_img = req.file ? req.file.filename : null;
 
   connection.query(
-    'INSERT INTO board_review(br_user_no, br_rank, br_img, br_desc, br_rt_no) VELUES(?, ?, ?, ?, ?)'
+    'INSERT INTO board_review(br_user_no, br_rank, br_img, br_desc, br_rt_no) VALUES(?, ?, ?, ?, ?)',
     [br_user_no, br_rank, br_img, br_desc, br_rt_no],
     (err, result) => {
       if (err) {
         console.log(err);
-        res.status(500).json({ error: err.message })
+        return res.status(500).json({ error: 'DB 입력 오류' });
       }
-      // 여기부터 작업하면 됨
+
+      res.json({ success: '등록 성공' });
     }
   )
 })
