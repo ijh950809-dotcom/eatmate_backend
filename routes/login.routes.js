@@ -9,10 +9,10 @@ const { SECRET_KEY, EXPIRES_IN } = require('../config/jwt');
 
 // 업로드 저장 위치/파일명 설정
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/profile'),
+  destination: (req, file, cb) => cb(null, 'uploads/user'),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    cb(null, `profile_${Date.now()}${ext}`);
+    cb(null, `user_${Date.now()}${ext}`);
   }
 });
 
