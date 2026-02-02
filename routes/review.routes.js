@@ -66,24 +66,27 @@ router.post('/review/detail/:br_no', (req, res) => {
 
 // [맛집 - 목록] 조회 review/restaurant
 router.post('/restaurant', (req, res) => {
-  const { category, filter } = req.body;
-  let orderBy = 'rt_rank DESC'
+  const { category, filter } = req.body || {};
+  let orderBy = 'rt_rank DESC';
 
-  if (filter == 'review') orderBy = 'rt_review DESC';
-  if (filter == 'name') orderBy = 'rt_name';
+  if (filter === 'review') orderBy = 'rt_review DESC';
+  if (filter === 'name') orderBy = 'rt_name';
 
-  connection.query(
-    `SELECT * FROM restaurant WHERE rt_cate = ? ORDER BY ${orderBy}`,
-    [category, filter],
-    (err, result) => {
-      if (err) {
-        console.log('DB ERROR:', err);
-        return res.status(500).json({ error: 'DB 조회 오류' });
-      }
-      res.json(result);
+  const sql = category
+    ? `SELECT * FROM restaurant WHERE rt_cate = ? ORDER BY ${orderBy}`
+    : `SELECT * FROM restaurant ORDER BY rt_no DESC`;
+
+  const params = category ? [category] : [];
+
+  connection.query(sql, params, (err, result) => {
+    if (err) {
+      console.log('DB ERROR:', err);
+      return res.status(500).json({ error: 'DB 조회 오류' });
     }
-  );
+    res.json(result);
+  });
 });
+
 
 // [맛집 - 상세] 조회 review/restaurant/detail
 router.get('/restaurant/detail/:rt_no', (req, res) => {
