@@ -17,7 +17,7 @@ router.get('/meetup/:bm_no', (req, res) => {
   const bm_no = Number(req.params.bm_no);
 
   connection.query(
-    'SELECT * FROM board_meetup WHERE bm_no = ?',
+    'SELECT board_meetup.*, users.u_nick, users.u_pic FROM board_meetup INNER JOIN users ON board_meetup.bm_user_no = users.u_no WHERE bm_no = ?',
     [bm_no],
     (err, results) => {
       if (err) {
@@ -34,7 +34,7 @@ router.get('/meetup/:bm_no', (req, res) => {
 
 // 맛집 탐방 meetup - 게시물 등록
 router.post('/meetup', (req, res) => {
-  const { bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all } = req.body;
+  const { bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all } = req.body;
 
   if (!bm_m_res || !bm_title || !bm_desc || !bm_m_date) {
     return res.status(400).json({ error: '필수항목이 누락되었습니다.' });
@@ -50,7 +50,7 @@ router.post('/meetup', (req, res) => {
     `INSERT INTO board_meetup
     (bm_board_cate, bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all)
     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    ['meetup', 1, bm_m_res, bm_title, bm_desc, bm_m_date, peopleAll],
+    ['meetup', bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, peopleAll],
     (err, results) => {
       if (err) {
         console.log('등록오류:', err);
@@ -60,5 +60,49 @@ router.post('/meetup', (req, res) => {
     }
   );
 });
+
+router.post('/meetup/join', (req, res) => {
+  const { bm_no, u_no, bm_m_people, bm_m_people_all } = req.body;
+
+
+  connection.query(
+    `INSERT INTO meetup_join (bm_no, u_no) VALUES (?,?)`, [bm_no, u_no],
+    (err, results) => {
+      if (err) {
+        console.log('등록오류:', err.code, err.sqlMessage);
+        return res.status(500).json({ error: '참석 실패' });
+      }
+      res.json({ success: true });
+    }
+  );
+
+
+  connection.query(
+    `SELECT bm_m_people, bm_m_people_all FORM board_meetup WHERE bm_no = ?`, [bm_m_people, bm_m_people_all],
+    (err, results) => {
+      if (bm_m_people >= bm_m_people_all) {
+        return res.status(400).json({ error: '마감되었습니다.' })
+      }
+    }
+  )
+});
+/////////////////
+router.get('/meetup/join/check', (req, res) => {
+  const { bm_no, u_no } = req.body;
+
+  connection.query(
+    `SELECT 1 FROM meetup_join WHERE bm_no = ? AND u_no = ?`,
+    [bm_no, u_no],
+    (err, rows) => {
+      if (err) {
+        return res.status(400).json({ error: '이미 신청한 모임입니다.' });
+      }
+    }
+  )
+
+});
+/////////////
+
+
 
 module.exports = router;
