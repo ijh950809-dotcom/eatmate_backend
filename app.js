@@ -9,12 +9,13 @@ const reviewRouter = require('./routes/review.routes');
 const loginRouter = require('./routes/login.routes');
 
 const app = express();
+const path = require('path');
 
 app.use(cors());
 app.use(express.json()); // JSON 본문 파싱
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/uploads', express.static('uploads')); // 이미지 업로드
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // 업로드된 이미지 확인 가능
 app.use('/', indexRouter);                      // 테스트 라우트
 app.use('/', commonRouter);                     // 공통
 app.use('/', communityRouter);                  // communitylist

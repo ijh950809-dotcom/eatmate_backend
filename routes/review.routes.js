@@ -102,6 +102,25 @@ router.get('/restaurant/detail/:rt_no', (req, res) => {
   )
 })
 
+// [글쓰기 - 맛집 리뷰] write/review
+// 맛집명 검색
+router.post('/restaurant/search', (req, res) => {
+  const { word } = req.body;
+
+  connection.query(
+    `SELECT * FROM restaurant WHERE rt_name LIKE ?`,
+    [`%${word}%`],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'DB 맛집 조회 오류' });
+      }
+
+      res.json(result);
+    }
+  )
+})
+
 // 업로드 저장 위치/파일명 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/review'),
@@ -122,7 +141,7 @@ const upload = multer({
   },
 });
 
-// [글쓰기 - 맛집 리뷰] write/review
+// 입력 쿼리문
 router.post('/write/review', upload.single('br_img'), (req, res) => {
   const { br_user_no, br_rank, br_desc, br_rt_no } = req.body;
   const br_img = req.file ? req.file.filename : null;
