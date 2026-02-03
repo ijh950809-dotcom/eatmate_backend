@@ -7,6 +7,7 @@ const communityRouter = require('./routes/community.routes');
 const meetupRouter = require('./routes/meetup.routes');
 const reviewRouter = require('./routes/review.routes');
 const loginRouter = require('./routes/login.routes');
+const adminRouter = require('./routes/admin.routes');
 
 const app = express();
 const path = require('path');
@@ -22,6 +23,7 @@ app.use('/', communityRouter);                  // communitylist
 app.use('/', meetupRouter);                     // meetup
 app.use('/', reviewRouter);                     // review
 app.use('/', loginRouter);                      // login/join
+app.use('/', adminRouter);                      // admin
 
 // multer 에러 포함 전역 에러 핸들러
 app.use((err, req, res, next) => {
