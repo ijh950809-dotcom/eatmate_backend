@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const connection = require('../config/db');
-
-
 const jwt = require('jsonwebtoken');
 const { SECRET_KEY } = require('../config/jwt');
+const multer = require('multer');
+const path = require('path');
 
 console.log('SECRET_KEY:', SECRET_KEY); // 디버깅용
 //토큰
@@ -55,11 +55,32 @@ router.get('/meetup/:bm_no', (req, res) => {
   );
 });
 
-// 맛집 탐방 meetup - 게시물 등록
-router.post('/meetup', (req, res) => {
-  const { bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all } = req.body;
+// 업로드 저장 위치/파일명 설정
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/meetup'),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `meetup_${Date.now()}${ext}`);
+  }
+});
 
-  if (!bm_m_res || !bm_title || !bm_desc || !bm_m_date) {
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('이미지 파일만 업로드 가능합니다.'));
+    }
+    cb(null, true);
+  },
+});
+
+// 맛집 탐방 meetup - 게시물 등록
+router.post('/meetup', upload.single('bm_img'), (req, res) => {
+  const { bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all } = req.body;
+  const bm_img = req.file ? req.file.filename : null;
+
+  if (!bm_m_res || !bm_title || !bm_desc || !bm_m_date || !bm_img) {
     return res.status(400).json({ error: '필수항목이 누락되었습니다.' });
   }
   const peopleAll = parseInt(bm_m_people_all)
@@ -71,9 +92,9 @@ router.post('/meetup', (req, res) => {
 
   connection.query(
     `INSERT INTO board_meetup
-    (bm_board_cate, bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all)
-    VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    ['meetup', bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, peopleAll],
+    (bm_board_cate, bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all, bm_img)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    ['meetup', bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, peopleAll, bm_img],
     (err, results) => {
       if (err) {
         console.log('등록오류:', err);
