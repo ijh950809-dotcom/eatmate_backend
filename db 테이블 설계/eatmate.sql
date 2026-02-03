@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-02-03 09:30
+-- 생성 시간: 26-02-03 12:55
 -- 서버 버전: 10.4.32-MariaDB
 -- PHP 버전: 8.0.30
 
@@ -196,6 +196,19 @@ INSERT INTO `board_review` (`br_no`, `br_board_cate`, `br_user_no`, `br_rank`, `
 (50, 'review', 20, 5, 'r50.jpeg', NULL, NULL, NULL, NULL, '수제 케이크라 그런지 크림이 느끼하지 않고 깔끔했습니다.\n시트가 퍽퍽하지 않고 촉촉해서 식감이 좋았고요.\n단맛이 과하지 않아 커피랑 같이 먹기 딱이었습니다.\n조각 케이크 크기도 적당해서 여러 개 맛보기 좋았어요.\n매장 분위기가 아늑해서 오래 앉아 있어도 편했습니다.\n포장도 깔끔하게 해줘서 선물용으로도 괜찮겠더라고요.\n직원분 응대도 친절해서 기분 좋게 나왔습니다.\n가격은 조금 있지만 퀄리티 생각하면 납득돼요.\n다음엔 다른 시즌 메뉴도 먹어보고 싶습니다.\n디저트 좋아하는 분들이면 만족할 확률 높아요.', 71, 1, 0, '2024-02-10 16:40:00'),
 (51, 'review', 3, 4, 'r51.jpeg', NULL, NULL, NULL, NULL, '마카롱 꼬끄가 쫀득해서 식감이 좋았습니다.\n필링이 너무 달지 않아 여러 개 먹어도 부담이 덜했고,\n맛 종류도 다양해서 고르는 재미가 있어요.\n보관 방법 안내도 잘 되어 있어 초보도 편했습니다.\n선물용으로도 무난해서 종종 살 것 같아요.\n다음엔 다른 맛 조합으로 사보려고요.', 72, 0, 0, '2024-02-11 14:15:00'),
 (52, 'review', 25, 4, 'r52.jpeg', NULL, NULL, NULL, NULL, '여러 나라 메뉴를 한 번에 즐길 수 있어서 좋았어요.\n전체적으로 무난한 맛이라 호불호가 적을 듯하고,\n좌석이 넓어서 모임으로 가기 괜찮습니다.\n가격대도 과하지 않아 부담이 덜했고요.\n다음엔 다른 메뉴 조합으로 다시 먹어볼게요.', 86, 1, 0, '2024-02-11 18:10:00');
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `bookmark`
+--
+
+CREATE TABLE `bookmark` (
+  `bk_no` int(11) NOT NULL COMMENT '북마크 번호',
+  `bk_user_no` int(11) NOT NULL COMMENT '회원 번호 (users.no)',
+  `bk_rt_no` int(11) NOT NULL COMMENT '맛집 번호 (restaurant.no)',
+  `bk_date` datetime NOT NULL DEFAULT current_timestamp() COMMENT '북마크 등록일'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='맛집 북마크 테이블';
 
 -- --------------------------------------------------------
 
@@ -737,6 +750,13 @@ ALTER TABLE `board_review`
   ADD KEY `fk_review_restaurant` (`br_rt_no`);
 
 --
+-- 테이블의 인덱스 `bookmark`
+--
+ALTER TABLE `bookmark`
+  ADD PRIMARY KEY (`bk_no`),
+  ADD UNIQUE KEY `uk_user_restaurant` (`bk_user_no`,`bk_rt_no`);
+
+--
 -- 테이블의 인덱스 `comment`
 --
 ALTER TABLE `comment`
@@ -793,6 +813,12 @@ ALTER TABLE `board_meetup`
 --
 ALTER TABLE `board_review`
   MODIFY `br_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '리뷰 게시글 번호', AUTO_INCREMENT=53;
+
+--
+-- 테이블의 AUTO_INCREMENT `bookmark`
+--
+ALTER TABLE `bookmark`
+  MODIFY `bk_no` int(11) NOT NULL AUTO_INCREMENT COMMENT '북마크 번호';
 
 --
 -- 테이블의 AUTO_INCREMENT `comment`

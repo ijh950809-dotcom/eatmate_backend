@@ -4,7 +4,8 @@ const path = require('path');
 
 const connection = require('../config/db');
 
-// [맛집 리뷰 - 목록] 조회 review
+/*** [맛집 리뷰 - 목록] ***/
+// 조회 review
 router.get('/review', (req, res) => {
   connection.query(
     `SELECT board_review.*, restaurant.rt_name, restaurant.rt_cate, restaurant.rt_location, users.u_nick
@@ -24,7 +25,7 @@ router.get('/review', (req, res) => {
   );
 });
 
-// [맛집 - 상세] 조회 안에 있는 [맛집 리뷰 - 목록] 조회
+// [맛집 - 상세] 안에 있는 [맛집 리뷰 - 목록]
 router.get('/review/:rt_no', (req, res) => {
   const rt_no = req.params.rt_no;
 
@@ -46,7 +47,7 @@ router.get('/review/:rt_no', (req, res) => {
   );
 });
 
-// [맛집 리뷰 - 상세] 조회 review/detail
+/*** [맛집 리뷰 - 상세] 조회 review/detail ***/
 router.post('/review/detail/:br_no', (req, res) => {
   const { br_no } = req.params;
 
@@ -66,7 +67,7 @@ router.post('/review/detail/:br_no', (req, res) => {
   );
 })
 
-// [맛집 - 목록] 조회 review/restaurant
+/*** [맛집 - 목록] 조회 review/restaurant ***/
 router.post('/restaurant', (req, res) => {
   const { category, filter } = req.body || {};
   let orderBy = 'rt_rank DESC';
@@ -89,8 +90,8 @@ router.post('/restaurant', (req, res) => {
   });
 });
 
-
-// [맛집 - 상세] 조회 review/restaurant/detail
+/*** [맛집 - 상세] ***/
+// 조회 review/restaurant/detail
 router.get('/restaurant/detail/:rt_no', (req, res) => {
   const rt_no = req.params.rt_no;
 
@@ -107,7 +108,28 @@ router.get('/restaurant/detail/:rt_no', (req, res) => {
   )
 })
 
-// [글쓰기 - 맛집 리뷰] write/review
+// 저장(bookmark)
+router.post('/bookmark', (req, res) => {
+  const { bk_user_no, bk_rt_no, toggle } = req.body;
+
+  const sql =
+    toggle
+      ?
+      'INSERT INTO bookmark(bk_user_no, bk_rt_no) VALUES(?, ?)'
+      :
+      'DELETE FROM bookmark WHERE bk_user_no = ? && bk_rt_no = ?'
+
+  connection.query(sql, [bk_user_no, bk_rt_no], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'DB 저장 입력 오류' });
+    }
+
+    res.json({ success: '등록 성공' });
+  })
+})
+
+/*** [글쓰기 - 맛집 리뷰] write/review ***/
 // 맛집명 검색
 router.post('/restaurant/search', (req, res) => {
   const { word } = req.body;
