@@ -7,10 +7,12 @@ const connection = require('../config/db');
 // [맛집 리뷰 - 목록] 조회 review
 router.get('/review', (req, res) => {
   connection.query(
-    `SELECT board_review.*, restaurant.rt_name, restaurant.rt_cate, restaurant.rt_location 
+    `SELECT board_review.*, restaurant.rt_name, restaurant.rt_cate, restaurant.rt_location, users.u_nick
     FROM board_review
     INNER JOIN restaurant 
       ON board_review.br_rt_no = restaurant.rt_no
+      INNER JOIN users 
+      ON board_review.br_user_no = users.u_no
     ORDER BY br_date DESC`,
     (err, result) => {
       if (err) {

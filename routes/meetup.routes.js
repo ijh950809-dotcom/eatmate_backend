@@ -22,11 +22,11 @@ function getUserFromToken(req) {
     return null;
   }
 }
-
+//SELECT * FROM board_meetup
 
 // 맛집 탐방 meetup - 목록 조회
 router.get('/meetup', (req, res) => {
-  connection.query('SELECT * FROM board_meetup', (err, results) => {
+  connection.query('SELECT board_meetup.*, users.u_nick FROM board_meetup INNER JOIN users ON board_meetup.bm_user_no = users.u_no ORDER by bm_no DESC', (err, results) => {
     if (err) {
       console.log('쿼리문 오류:', err);
       return res.status(500).json({ error: 'DB쿼리문 오류' });
