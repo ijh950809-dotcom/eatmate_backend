@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-02-03 08:59
+-- 생성 시간: 26-02-03 09:30
 -- 서버 버전: 10.4.32-MariaDB
 -- PHP 버전: 8.0.30
 
@@ -72,7 +72,7 @@ INSERT INTO `board_community` (`bc_no`, `bc_board_cate`, `bc_user_no`, `bc_title
 (12, 'community', 2, '혼밥러의 하루', '오늘 혼밥 후기 남깁니다.', 3, 1, '2024-01-22 12:05:00'),
 (13, 'community', 3, '단골집 사장님 이야기', '단골집 사장님이 너무 친절하세요.', 3, 1, '2024-01-23 18:30:00'),
 (14, 'community', 4, '맛집 원정 다녀왔어요', '멀리 다녀왔지만 후회 없는 선택!', 3, 2, '2024-01-24 20:40:00'),
-(15, 'community', 5, '야식 고민 해결', '결국 치킨 먹었습니다.', 3, 1, '2024-01-25 23:55:00');
+(15, 'community', 5, '야식 고민 해결', '결국 치킨 먹었습니다.', 4, 1, '2024-01-25 23:55:00');
 
 -- --------------------------------------------------------
 
@@ -105,7 +105,7 @@ CREATE TABLE `board_meetup` (
 --
 
 INSERT INTO `board_meetup` (`bm_no`, `bm_board_cate`, `bm_user_no`, `bm_img`, `bm_img2`, `bm_img3`, `bm_img4`, `bm_img5`, `bm_title`, `bm_desc`, `bm_m_date`, `bm_m_res`, `bm_m_people`, `bm_m_people_all`, `bm_heart`, `bm_comment`, `bm_date`) VALUES
-(1, 'meetup', 1, 'food1.png', NULL, NULL, NULL, NULL, '주말 고기 맛집 탐방 같이 가요', '고기 좋아하시는 분들 주말에 같이 맛집 탐방해요.', '2024-02-03', '정육식당 한우집', 3, 5, 5, 4, '2024-01-20 18:10:00'),
+(1, 'meetup', 1, 'food1.png', NULL, NULL, NULL, NULL, '주말 고기 맛집 탐방 같이 가요', '고기 좋아하시는 분들 주말에 같이 맛집 탐방해요.', '2024-02-03', '정육식당 한우집', 3, 5, 6, 4, '2024-01-20 18:10:00'),
 (2, 'meetup', 2, 'food2.png', NULL, NULL, NULL, NULL, '혼밥러 환영 소규모 모임', '혼자 오셔도 부담 없는 소규모 탐방입니다.', '2024-02-05', '동네 백반집', 2, 4, 6, 4, '2024-01-21 12:40:00'),
 (3, 'meetup', 3, 'food3.png', NULL, NULL, NULL, NULL, '숨은 맛집 같이 가실 분', '동네 숨은 맛집을 같이 가보려고 합니다.', '2024-02-07', '골목 식당', 4, 6, 7, 4, '2024-01-22 19:30:00'),
 (4, 'meetup', 4, 'food4.png', NULL, NULL, NULL, NULL, '전국 맛집 원정 1차', '멀지만 정말 유명한 맛집입니다. 함께 가요!', '2024-02-10', '전주 비빔밥 명가', 5, 5, 6, 3, '2024-01-23 21:15:00'),
@@ -144,7 +144,7 @@ CREATE TABLE `board_review` (
 --
 
 INSERT INTO `board_review` (`br_no`, `br_board_cate`, `br_user_no`, `br_rank`, `br_img`, `br_img2`, `br_img3`, `br_img4`, `br_img5`, `br_desc`, `br_rt_no`, `br_heart`, `br_comment`, `br_date`) VALUES
-(1, 'review', 1, 5, 'r01.jpeg', NULL, NULL, NULL, NULL, '고기 질이 확실히 좋았고 첫 입부터 만족했어요.\n기름이 과하지 않아서 끝까지 깔끔하게 먹었습니다.\n직원분들이 굽기 타이밍도 잘 봐주셔서 편했어요.\n기본 반찬도 신선하고 리필도 빠르게 해주셨고요.\n가격대는 조금 있지만 값어치는 충분했습니다.\n다음엔 다른 부위도 먹으러 재방문할게요.', 91, 3, 3, '2024-01-11 19:10:00'),
+(1, 'review', 1, 5, 'r01.jpeg', NULL, NULL, NULL, NULL, '고기 질이 확실히 좋았고 첫 입부터 만족했어요.\n기름이 과하지 않아서 끝까지 깔끔하게 먹었습니다.\n직원분들이 굽기 타이밍도 잘 봐주셔서 편했어요.\n기본 반찬도 신선하고 리필도 빠르게 해주셨고요.\n가격대는 조금 있지만 값어치는 충분했습니다.\n다음엔 다른 부위도 먹으러 재방문할게요.', 91, 4, 3, '2024-01-11 19:10:00'),
 (2, 'review', 2, 4, 'r02.jpeg', NULL, NULL, NULL, NULL, '혼자 먹기 좋은 분위기라 부담 없었습니다.\n가성비도 괜찮아서 종종 올 듯해요.', 2, 3, 1, '2024-01-12 12:50:00'),
 (3, 'review', 3, 5, 'r03.jpeg', NULL, NULL, NULL, NULL, '우연히 들어갔는데 기대 이상이라 놀랐어요.\n가게는 크지 않지만 회전이 빨라서 오래 기다리진 않았습니다.\n메뉴판이 단순한데 그게 오히려 자신감 같아서 믿음이 갔고요.\n메인 메뉴 양념이 과하지 않고 재료 맛이 살아있었어요.\n반찬도 하나하나 손맛이 느껴져서 숟가락이 멈추질 않았습니다.\n특히 국/찌개 쪽이 진짜 좋았고, 밥이랑 찰떡이었어요.\n가격이 비싸지 않은데도 퀄리티가 유지되는 게 신기했습니다.\n사장님이 동네 손님들 챙기는 느낌이 따뜻했고요.\n다 먹고 나서도 속이 편해서 더 좋았습니다.\n숨은 맛집으로 저장 완료, 주변에도 추천할게요.', 3, 2, 3, '2024-01-13 20:00:00'),
 (4, 'review', 4, 5, 'r04.jpeg', NULL, NULL, NULL, NULL, '멀리서 일부러 찾아갔는데 후회가 없었어요.\n한 그릇에 재료가 푸짐하게 들어가서 만족감이 컸고,\n맛의 밸런스가 좋아서 계속 먹게 됩니다.\n관광지 가격 느낌이 아니라 더 좋았어요.\n전주 가면 다시 들를 집으로 확정!', 4, 2, 2, '2024-01-14 21:30:00'),
@@ -195,7 +195,7 @@ INSERT INTO `board_review` (`br_no`, `br_board_cate`, `br_user_no`, `br_rank`, `
 (49, 'review', 29, 5, 'r49.jpeg', NULL, NULL, NULL, NULL, '드립 향이 좋아서 커피만으로도 만족했어요.\n작업하기도 괜찮습니다.', 65, 1, 0, '2024-02-10 11:05:00'),
 (50, 'review', 20, 5, 'r50.jpeg', NULL, NULL, NULL, NULL, '수제 케이크라 그런지 크림이 느끼하지 않고 깔끔했습니다.\n시트가 퍽퍽하지 않고 촉촉해서 식감이 좋았고요.\n단맛이 과하지 않아 커피랑 같이 먹기 딱이었습니다.\n조각 케이크 크기도 적당해서 여러 개 맛보기 좋았어요.\n매장 분위기가 아늑해서 오래 앉아 있어도 편했습니다.\n포장도 깔끔하게 해줘서 선물용으로도 괜찮겠더라고요.\n직원분 응대도 친절해서 기분 좋게 나왔습니다.\n가격은 조금 있지만 퀄리티 생각하면 납득돼요.\n다음엔 다른 시즌 메뉴도 먹어보고 싶습니다.\n디저트 좋아하는 분들이면 만족할 확률 높아요.', 71, 1, 0, '2024-02-10 16:40:00'),
 (51, 'review', 3, 4, 'r51.jpeg', NULL, NULL, NULL, NULL, '마카롱 꼬끄가 쫀득해서 식감이 좋았습니다.\n필링이 너무 달지 않아 여러 개 먹어도 부담이 덜했고,\n맛 종류도 다양해서 고르는 재미가 있어요.\n보관 방법 안내도 잘 되어 있어 초보도 편했습니다.\n선물용으로도 무난해서 종종 살 것 같아요.\n다음엔 다른 맛 조합으로 사보려고요.', 72, 0, 0, '2024-02-11 14:15:00'),
-(52, 'review', 25, 4, 'r52.jpeg', NULL, NULL, NULL, NULL, '여러 나라 메뉴를 한 번에 즐길 수 있어서 좋았어요.\n전체적으로 무난한 맛이라 호불호가 적을 듯하고,\n좌석이 넓어서 모임으로 가기 괜찮습니다.\n가격대도 과하지 않아 부담이 덜했고요.\n다음엔 다른 메뉴 조합으로 다시 먹어볼게요.', 86, 0, 0, '2024-02-11 18:10:00');
+(52, 'review', 25, 4, 'r52.jpeg', NULL, NULL, NULL, NULL, '여러 나라 메뉴를 한 번에 즐길 수 있어서 좋았어요.\n전체적으로 무난한 맛이라 호불호가 적을 듯하고,\n좌석이 넓어서 모임으로 가기 괜찮습니다.\n가격대도 과하지 않아 부담이 덜했고요.\n다음엔 다른 메뉴 조합으로 다시 먹어볼게요.', 86, 1, 0, '2024-02-11 18:10:00');
 
 -- --------------------------------------------------------
 
@@ -523,7 +523,11 @@ INSERT INTO `heart` (`ht_no`, `ht_user_no`, `ht_board_cate`, `ht_board_no`, `ht_
 (404, 27, 'community', 10, '2026-02-03 09:21:46'),
 (405, 28, 'community', 11, '2026-02-03 09:25:19'),
 (406, 29, 'community', 4, '2026-02-03 09:28:58'),
-(407, 30, 'community', 15, '2026-02-03 09:32:33');
+(407, 30, 'community', 15, '2026-02-03 09:32:33'),
+(415, 32, 'review', 52, '2026-02-03 17:00:42'),
+(416, 32, 'review', 1, '2026-02-03 17:00:47'),
+(417, 32, 'meetup', 1, '2026-02-03 17:01:43'),
+(418, 32, 'community', 15, '2026-02-03 17:01:48');
 
 -- --------------------------------------------------------
 
@@ -657,7 +661,7 @@ CREATE TABLE `users` (
   `u_pw` varchar(255) NOT NULL COMMENT '비밀번호',
   `u_nick` varchar(50) NOT NULL COMMENT '닉네임',
   `u_desc` text DEFAULT NULL COMMENT '내 소개글',
-  `u_pic` varchar(255) DEFAULT NULL COMMENT '프로필 사진',
+  `u_pic` varchar(255) DEFAULT 'default-user.png' COMMENT '프로필 사진',
   `u_badge` varchar(20) DEFAULT 'normal' COMMENT '뱃지(vip, gold 등)',
   `u_date` datetime DEFAULT current_timestamp() COMMENT '등록 날짜/시간'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -697,7 +701,7 @@ INSERT INTO `users` (`u_no`, `u_id`, `u_pw`, `u_nick`, `u_desc`, `u_pic`, `u_bad
 (28, 'user28', 'user28', '지도저장28', '지도에 맛집 저장 중.', 'user28.png', 'normal', '2024-01-28 11:50:00'),
 (29, 'user29', 'user29', '원정러29', '멀어도 맛집이면 갑니다.', 'user29.png', 'gold', '2024-01-29 12:00:00'),
 (30, 'user30', 'user30', '올드테이스트30', '옛날 감성 식당 좋아요.', 'user30.png', 'normal', '2024-01-30 12:10:00'),
-(32, 'test', '$2b$10$QPDhQEfL.eJt.1dJWs.3IOxu5OkHsStkIvgp5Akiw5gAox4Xpe4YS', 'test', '', NULL, 'normal', '2026-02-03 16:52:36');
+(32, 'test', '$2b$10$QPDhQEfL.eJt.1dJWs.3IOxu5OkHsStkIvgp5Akiw5gAox4Xpe4YS', 'test', '', 'test.jpg', 'normal', '2026-02-03 16:52:36');
 
 --
 -- 덤프된 테이블의 인덱스
@@ -800,7 +804,7 @@ ALTER TABLE `comment`
 -- 테이블의 AUTO_INCREMENT `heart`
 --
 ALTER TABLE `heart`
-  MODIFY `ht_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '하트 번호', AUTO_INCREMENT=415;
+  MODIFY `ht_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '하트 번호', AUTO_INCREMENT=419;
 
 --
 -- 테이블의 AUTO_INCREMENT `restaurant`
