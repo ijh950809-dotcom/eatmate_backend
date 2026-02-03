@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-02-01 12:30
+-- 생성 시간: 26-02-02 11:53
 -- 서버 버전: 10.4.32-MariaDB
 -- PHP 버전: 8.0.30
 
@@ -196,7 +196,7 @@ INSERT INTO `board_review` (`br_no`, `br_board_cate`, `br_user_no`, `br_rank`, `
 (49, 'review', 29, 5, 'r49.jpeg', NULL, NULL, NULL, NULL, '드립 향이 좋아서 커피만으로도 만족했어요.\n작업하기도 괜찮습니다.', 65, 9, 0, '2024-02-10 11:05:00'),
 (50, 'review', 20, 5, 'r50.jpeg', NULL, NULL, NULL, NULL, '수제 케이크라 그런지 크림이 느끼하지 않고 깔끔했습니다.\n시트가 퍽퍽하지 않고 촉촉해서 식감이 좋았고요.\n단맛이 과하지 않아 커피랑 같이 먹기 딱이었습니다.\n조각 케이크 크기도 적당해서 여러 개 맛보기 좋았어요.\n매장 분위기가 아늑해서 오래 앉아 있어도 편했습니다.\n포장도 깔끔하게 해줘서 선물용으로도 괜찮겠더라고요.\n직원분 응대도 친절해서 기분 좋게 나왔습니다.\n가격은 조금 있지만 퀄리티 생각하면 납득돼요.\n다음엔 다른 시즌 메뉴도 먹어보고 싶습니다.\n디저트 좋아하는 분들이면 만족할 확률 높아요.', 71, 12, 0, '2024-02-10 16:40:00'),
 (51, 'review', 3, 4, 'r51.jpeg', NULL, NULL, NULL, NULL, '마카롱 꼬끄가 쫀득해서 식감이 좋았습니다.\n필링이 너무 달지 않아 여러 개 먹어도 부담이 덜했고,\n맛 종류도 다양해서 고르는 재미가 있어요.\n보관 방법 안내도 잘 되어 있어 초보도 편했습니다.\n선물용으로도 무난해서 종종 살 것 같아요.\n다음엔 다른 맛 조합으로 사보려고요.', 72, 7, 0, '2024-02-11 14:15:00'),
-(52, 'review', 25, 4, 'r52.jpeg', NULL, NULL, NULL, NULL, '여러 나라 메뉴를 한 번에 즐길 수 있어서 좋았어요.\n전체적으로 무난한 맛이라 호불호가 적을 듯하고,\n좌석이 넓어서 모임으로 가기 괜찮습니다.\n가격대도 과하지 않아 부담이 덜했고요.\n다음엔 다른 메뉴 조합으로 다시 먹어볼게요.', 86, 6, 0, '2024-02-11 18:10:00');
+(52, 'review', 25, 4, 'r52.jpeg', NULL, NULL, NULL, NULL, '여러 나라 메뉴를 한 번에 즐길 수 있어서 좋았어요.\n전체적으로 무난한 맛이라 호불호가 적을 듯하고,\n좌석이 넓어서 모임으로 가기 괜찮습니다.\n가격대도 과하지 않아 부담이 덜했고요.\n다음엔 다른 메뉴 조합으로 다시 먹어볼게요.', 86, 10, 0, '2024-02-11 18:10:00');
 
 -- --------------------------------------------------------
 
@@ -301,6 +301,36 @@ INSERT INTO `comment` (`ct_no`, `ct_user_no`, `ct_board_cate`, `ct_board_no`, `c
 (81, 28, 'review', 18, '김치찌개는 고기 양이 중요하죠. 사진도 궁금!', '2024-01-25 19:15:00'),
 (82, 29, 'review', 19, '24시간 국밥집이면 야근러에게 축복이네요', '2024-01-26 01:35:00'),
 (83, 30, 'review', 20, '돌솥은 마지막 누룽지가 킥인데… 누룽지 나왔나요?', '2024-01-26 14:05:00');
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `heart`
+--
+
+CREATE TABLE `heart` (
+  `ht_no` int(10) UNSIGNED NOT NULL COMMENT '하트 번호',
+  `ht_user_no` int(10) UNSIGNED NOT NULL COMMENT '회원 번호 (users.u_no)',
+  `ht_board_cate` varchar(50) NOT NULL COMMENT '게시판 카테고리(review/meetup/community)',
+  `ht_board_no` int(10) UNSIGNED NOT NULL COMMENT '게시물 번호',
+  `ht_date` datetime DEFAULT current_timestamp() COMMENT '등록 날짜/시간'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='게시판 하트(좋아요)';
+
+--
+-- 테이블의 덤프 데이터 `heart`
+--
+
+INSERT INTO `heart` (`ht_no`, `ht_user_no`, `ht_board_cate`, `ht_board_no`, `ht_date`) VALUES
+(1, 1, 'review', 1, '2026-01-31 10:12:00'),
+(2, 2, 'review', 1, '2026-01-31 10:15:30'),
+(3, 3, 'review', 2, '2026-01-31 11:02:10'),
+(4, 4, 'review', 3, '2026-01-31 11:10:00'),
+(5, 1, 'meetup', 1, '2026-01-31 12:20:00'),
+(6, 2, 'meetup', 2, '2026-01-31 12:25:40'),
+(7, 5, 'meetup', 3, '2026-01-31 13:45:00'),
+(8, 6, 'community', 1, '2026-01-31 14:30:00'),
+(9, 7, 'community', 2, '2026-01-31 14:31:10'),
+(10, 8, 'community', 3, '2026-01-31 15:10:00');
 
 -- --------------------------------------------------------
 
@@ -518,6 +548,15 @@ ALTER TABLE `comment`
   ADD KEY `idx_comment_user` (`ct_user_no`,`ct_date`);
 
 --
+-- 테이블의 인덱스 `heart`
+--
+ALTER TABLE `heart`
+  ADD PRIMARY KEY (`ht_no`),
+  ADD UNIQUE KEY `uq_heart` (`ht_user_no`,`ht_board_cate`,`ht_board_no`),
+  ADD KEY `idx_heart_board` (`ht_board_cate`,`ht_board_no`),
+  ADD KEY `idx_heart_user` (`ht_user_no`,`ht_date`);
+
+--
 -- 테이블의 인덱스 `restaurant`
 --
 ALTER TABLE `restaurant`
@@ -565,6 +604,12 @@ ALTER TABLE `comment`
   MODIFY `ct_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '댓글 번호', AUTO_INCREMENT=84;
 
 --
+-- 테이블의 AUTO_INCREMENT `heart`
+--
+ALTER TABLE `heart`
+  MODIFY `ht_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '하트 번호', AUTO_INCREMENT=11;
+
+--
 -- 테이블의 AUTO_INCREMENT `restaurant`
 --
 ALTER TABLE `restaurant`
@@ -605,6 +650,12 @@ ALTER TABLE `board_review`
 --
 ALTER TABLE `comment`
   ADD CONSTRAINT `fk_ct_user` FOREIGN KEY (`ct_user_no`) REFERENCES `users` (`u_no`) ON DELETE CASCADE;
+
+--
+-- 테이블의 제약사항 `heart`
+--
+ALTER TABLE `heart`
+  ADD CONSTRAINT `fk_ht_user` FOREIGN KEY (`ht_user_no`) REFERENCES `users` (`u_no`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

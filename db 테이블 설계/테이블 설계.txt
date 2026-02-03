@@ -91,3 +91,11 @@
 - 게시판(맛집 리뷰, 맛집 탐방, 자유게시판) 테이블의 게시물 no     ct_board_no
 - 댓글 === 본문글                                              ct_desc
 - 등록 날짜/시간                                               ct_date
+
+
+[게시판 하트] heart || ht_
+- no                                                          ht_no
+- 회원 테이블의 회원 no                                         ht_user_no
+- 게시판(맛집 리뷰, 맛집 탐방, 자유게시판) 테이블 카테고리        ht_board_cate
+- 게시판(맛집 리뷰, 맛집 탐방, 자유게시판) 테이블의 게시물 no     ht_board_no
+- 등록 날짜/시간                                               ht_date
