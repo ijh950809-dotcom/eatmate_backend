@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const connection = require('../config/db');
 
+/*** 댓글 영역 ***/
 // 댓글 출력
 router.post('/common/chat', (req, res) => {
   const { board_cate, board_no } = req.body;
@@ -23,7 +24,25 @@ router.post('/common/chat', (req, res) => {
   )
 })
 
-// 하트 출력
+// 댓글 입력
+router.post('/comment', (req, res) => {
+  const { ct_user_no, ct_board_cate, ct_board_no, ct_desc } = req.body;
+
+  connection.query(
+    'INSERT INTO comment(ct_user_no, ct_board_cate, ct_board_no, ct_desc) VALUES(?, ?, ?, ?)',
+    [ct_user_no, ct_board_cate, ct_board_no, ct_desc],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'DB 입력 오류' })
+      }
+
+      res.json({ success: '등록 성공' });
+    }
+  )
+})
+
+/*** 하트 출력 ***/
 // board_review/board_meetup/board_community 테이블의 하트 수 업데이트
 router.put('/board/heart', (req, res) => {
   const { board_cate, board_no, heart_toggle } = req.body;
