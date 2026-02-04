@@ -60,7 +60,7 @@ router.post('/admin/idcheck', (req, res) => {
   const { au_id } = req.body;
   const sql = 'SELECT * FROM admin_users WHERE au_id=?';
 
-  connsection.query(sql, [qu_id], (err, result) => {
+  connection.query(sql, [au_id], (err, result) => {
     if (err) return res.status(500).send(err);
     res.json({ exists: result.length > 0 });
   })
