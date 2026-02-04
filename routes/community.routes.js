@@ -19,6 +19,26 @@ router.get('/communitylist', (req, res) => {
   });
 });
 
+router.get('/community', (req, res) => {
+  const { user_no } = req.query;
+
+  const sql = `
+    SELECT board_community.*, users.*
+    FROM board_community
+    INNER JOIN users ON board_community.bc_user_no = users.u_no
+    WHERE board_community.bc_user_no = ?
+    ORDER BY board_community.bc_no DESC
+  `;
+
+  connection.query(sql, [user_no], (err, results) => {
+    if (err) {
+      console.log('쿼리문 오류 : ', err);
+      return res.status(500).json({ error: 'DB쿼리문 오류' });
+    }
+    res.json(results);
+  });
+});
+
 // 자유게시판 게시글 상세 페이지 조회
 router.get('/community/detail/:bc_no', (req, res) => {
   const bc_no = req.params.bc_no;
@@ -39,18 +59,18 @@ router.get('/community/detail/:bc_no', (req, res) => {
 })
 
 // 자유게시판 게시글 작성 (입력)
-router.post('/writecommunity', (req, res) =>{
+router.post('/writecommunity', (req, res) => {
   const { bc_user_no, bc_title, bc_desc } = req.body;
   if (!bc_title || !bc_desc) {
-    return res.status(400).json({error: '필수 항목이 누락되었습니다.' });
+    return res.status(400).json({ error: '필수 항목이 누락되었습니다.' });
   }
   connection.query(
     'INSERT INTO board_community ( bc_user_no, bc_title, bc_desc ) VALUES ( ?,?,? )',
-    [ bc_user_no, bc_title, bc_desc],
-    (err, result) =>{
+    [bc_user_no, bc_title, bc_desc],
+    (err, result) => {
       if (err) {
         console.log('등록오류 :', err);
-        res.status(500).json({ error: '글 등록 실패'});
+        res.status(500).json({ error: '글 등록 실패' });
         return
       }
       res.json({ success: true, insertId: result.insertId });
