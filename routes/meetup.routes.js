@@ -5,24 +5,6 @@ const { SECRET_KEY } = require('../config/jwt');
 const multer = require('multer');
 const path = require('path');
 
-console.log('SECRET_KEY:', SECRET_KEY); // 디버깅용
-//토큰
-function getUserFromToken(req) {
-  const auth = req.headers.authorization;
-  if (!auth) return null;
-
-  const token = auth.split(' ')[1];
-  if (!token) return null;
-
-  try {
-    const payload = jwt.verify(token, SECRET_KEY); // 여기서 실제 문자열 키 사용
-    return payload;
-  } catch (err) {
-    console.log('JWT verify error:', err.message);
-    return null;
-  }
-}
-//SELECT * FROM board_meetup
 
 // 맛집 탐방 meetup - 목록 조회
 router.get('/meetup/all', (req, res) => {
@@ -124,17 +106,13 @@ router.post('/meetup', upload.single('bm_img'), (req, res) => {
 });
 
 ///////////////////맛집탐방 참석내역에 있는지 확인
-router.get('/meetup/join/check', (req, res) => {
+router.get('/meetup_join', (req, res) => {
 
-  const user = getUserFromToken(req);
-  if (!user) return res.json({ joined: false });
-
-  const { bm_no } = req.query;
-  const u_no = user.token_no;
+  const { bm_no, user_no } = req.query;
 
   connection.query(
     `SELECT 1 FROM meetup_join WHERE bm_no = ? AND u_no = ?`,
-    [bm_no, u_no],
+    [bm_no, user_no],
     (err, rows) => {
       if (err) return res.status(500).json({ error: '조회실패' });
       res.json({ joined: rows.length > 0 });
@@ -143,55 +121,47 @@ router.get('/meetup/join/check', (req, res) => {
 });
 
 //참석하기
-router.post('/meetup/join', (req, res) => {
+router.post('/meetup_join', (req, res) => {
 
 
-  const user = getUserFromToken(req);
-  if (!user) {
-    return res.status(401).json({ error: '로그인 필요' });
-  }
-
-  const u_no = user.token_no;
-  const { bm_no } = req.body;
-
+  const { bm_no, user_no } = req.body;
 
   connection.query(
-    `SELECT bm_m_people, bm_m_people_all FROM board_meetup WHERE bm_no = ?`, [bm_no],
-    (err, rows) => {
-      if (rows[0].bm_m_people >= rows[0].bm_m_people_all) {
-        return res.status(400).json({ error: '마감되었습니다.' });
+    `INSERT INTO meetup_join (bm_no, u_no) VALUES (?,?)`, [bm_no, user_no],
+    err => {
+      if (err) {
+        return res.status(500).json({ error: '참석 실패' });
       }
       connection.query(
-        `SELECT 1 FROM meetup_join WHERE bm_no = ? AND u_no = ?`,
-        [bm_no, u_no],
-        (err, rows2) => {
-          if (rows2.length > 0) {
-            return res.status(400).json({ error: '이미참여했습니다.' })
+        `UPDATE board_meetup SET bm_m_people = bm_m_people+1 WHERE bm_no=?`, [bm_no],
+        updateErr => {
+          if (updateErr) {
+            return res.status(500).json({ error: '업데이트 실패' })
           }
-          connection.query(
-            `INSERT INTO meetup_join (bm_no, u_no) VALUES (?,?)`, [bm_no, u_no],
-            err => {
-              if (err) {
-                console.log('등록오류:', err.code, err.sqlMessage);
-                return res.status(500).json({ error: '참석 실패' });
-              }
-              res.json({ success: true });
-            }
-          );
+          res.json({ success: true });
         }
       );
-
-
     }
-  )
-
-
-
-
-
+  );
 });
 
-/////////////
+/////////////참석취소
+router.delete('/meetup_join', (req, res) => {
+  const { bm_no, user_no } = req.body;
+
+  connection.query(
+    `DELETE FROM meetup_join WHERE bm_no=? AND u_no=?`, [bm_no, user_no],
+    err => {
+      if (err) return res.status(500).json({ error: '취소실패' });
+
+      connection.query(
+        `UPDATE board_meetup SET bm_m_people = bm_m_people - 1 WHERE bm_no = ?`,
+        [bm_no]
+      );
+      res.json({ success: true });
+    }
+  );
+})
 
 
 
