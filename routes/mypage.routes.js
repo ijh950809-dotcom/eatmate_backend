@@ -1,14 +1,12 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
 
 const connection = require('../config/db');
 
-/*** [프로필 수정] ***/
-// 로그인한 유저값 가져오기
-router.get('/mypage/profile/:user_no', (req, res) => {
+/*** [마이페이지] ***/
+router.get('/mypage/:user_no', (req, res) => {
   const user_no = req.params.user_no;
 
   connection.query(
@@ -25,6 +23,7 @@ router.get('/mypage/profile/:user_no', (req, res) => {
   )
 })
 
+/*** [프로필 수정] ***/
 // 업로드 저장 위치/파일명 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/user'),
