@@ -25,7 +25,7 @@ function getUserFromToken(req) {
 //SELECT * FROM board_meetup
 
 // 맛집 탐방 meetup - 목록 조회
-router.get('/meetup', (req, res) => {
+router.get('/meetup/all', (req, res) => {
   connection.query('SELECT board_meetup.*, users.u_nick FROM board_meetup INNER JOIN users ON board_meetup.bm_user_no = users.u_no ORDER by bm_no DESC', (err, results) => {
     if (err) {
       console.log('쿼리문 오류:', err);
@@ -36,22 +36,40 @@ router.get('/meetup', (req, res) => {
 });
 
 // 맛집 탐방 meetup - 상세 조회
-router.get('/meetup/:bm_no', (req, res) => {
-  const bm_no = Number(req.params.bm_no);
+router.get('/meetup', (req, res) => {
+  const { bm_no, user_no } = req.query;
 
-  connection.query(
-    'SELECT board_meetup.*, users.u_nick, users.u_pic FROM board_meetup INNER JOIN users ON board_meetup.bm_user_no = users.u_no WHERE bm_no = ?',
-    [bm_no],
-    (err, results) => {
-      if (err) {
-        console.log('조회 오류:', err);
-        return res.status(500).json({ error: '데이터 조회 실패' });
-      }
-      if (results.length === 0) {
-        return res.status(404).json({ error: '해당자료가 존재하지 않습니다.' });
-      }
-      res.json(results[0]);
+  let sql = `
+    SELECT board_meetup.*, users.u_nick, users.u_pic 
+    FROM board_meetup 
+    INNER JOIN users ON board_meetup.bm_user_no = users.u_no 
+  `
+  let params = [];
+
+  if (bm_no) {
+    sql += 'WHERE bm_no = ?'; // 맛집 탐방 상세
+    params.push(bm_no);
+  } else if (user_no) {
+    sql += 'WHERE bm_user_no = ? ORDER BY bm_no DESC'; // 마이페이지 - 작성한 게시글
+    params.push(user_no);
+  }
+
+  connection.query(sql, params, (err, results) => {
+    if (err) {
+      console.log('조회 오류:', err);
+      return res.status(500).json({ error: '데이터 조회 실패' });
     }
+    if (results.length === 0) {
+      return res.status(404).json({ error: '해당자료가 존재하지 않습니다.' });
+    }
+
+    if (bm_no) {
+      if (results.length === 0) return res.status(404).json({ error: '해당자료가 존재하지 않습니다.' });
+      return res.json(results[0]);
+    } else {
+      return res.json(results);
+    }
+  }
   );
 });
 

@@ -5,47 +5,45 @@ const path = require('path');
 const connection = require('../config/db');
 
 /*** [맛집 리뷰 - 목록] ***/
-// 조회 review
+// 메인
+router.get('/review/all', (req, res) => {
+  connection.query(
+    `SELECT br.*, r.rt_name, r.rt_cate, r.rt_location
+    FROM board_review br
+    INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+    ORDER BY br_date DESC`,
+    (err, result) => {
+      if (err) return res.status(500).json({ error: 'DB 조회 오류' });
+      res.json(result);
+    }
+  );
+});
+
+// 서브
 router.get('/review', (req, res) => {
-  connection.query(
-    `SELECT board_review.*, restaurant.rt_name, restaurant.rt_cate, restaurant.rt_location, users.u_nick
-    FROM board_review
-    INNER JOIN restaurant 
-      ON board_review.br_rt_no = restaurant.rt_no
-      INNER JOIN users 
-      ON board_review.br_user_no = users.u_no
-    ORDER BY br_date DESC`,
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({ error: 'DB 조회 오류' });
-      }
-      res.json(result);
-    }
-  );
+  const { rt_no, user_no } = req.query;
+
+  let sql = `
+    SELECT br.*, r.rt_name, r.rt_cate, r.rt_location
+    FROM board_review br
+    INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+  `;
+  let params = [];
+
+  if (rt_no) {
+    sql += ' WHERE r.rt_no = ? ORDER BY br_date DESC'; // 맛집 상세
+    params.push(rt_no);
+  } else if (user_no) {
+    sql += ' WHERE br.br_user_no = ? ORDER BY br_date DESC'; // 마이페이지 - 작성한 게시글
+    params.push(user_no);
+  }
+
+  connection.query(sql, params, (err, result) => {
+    if (err) return res.status(500).json({ error: 'DB 조회 오류' });
+    res.json(result);
+  });
 });
 
-// [맛집 - 상세] 안에 있는 [맛집 리뷰 - 목록]
-router.get('/review/:rt_no', (req, res) => {
-  const rt_no = req.params.rt_no;
-
-  connection.query(
-    `SELECT board_review.*, restaurant.rt_name, restaurant.rt_cate, restaurant.rt_location 
-    FROM board_review
-    INNER JOIN restaurant 
-      ON board_review.br_rt_no = restaurant.rt_no
-    WHERE rt_no = ?
-    ORDER BY br_date DESC`,
-    [rt_no],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({ error: 'DB 조회 오류' });
-      }
-      res.json(result);
-    }
-  );
-});
 
 /*** [맛집 리뷰 - 상세] 조회 review/detail ***/
 router.post('/review/detail/:br_no', (req, res) => {
