@@ -187,4 +187,41 @@ router.post('/write/review', upload.single('br_img'), (req, res) => {
   )
 })
 
+
+// POST 맛집 등록 (관리자 기능)
+router.post('/restaurant/input', (req, res) => {
+  const { rt_cate, rt_name, rt_desc, rt_img, rt_img2, rt_img3, rt_img4, rt_img5, rt_tel, rt_location } = req.body;
+
+  if (!rt_cate || !rt_name || !rt_desc || !rt_img || !rt_img2 || !rt_img3 || !rt_img4 || !rt_img5 || !rt_tel || !rt_location) {
+    return res.status(400).json({ error: '항목이 누락되었습니다. 다시 확인하세요.' });
+  }
+  connection.query(
+    'INSERT INTO restaurant (rt_cate, rt_name, rt_desc, rt_img, rt_img2, rt_img3, rt_img4, rt_img5, rt_tel, rt_location) VALUES (?, ?, ?, ?, ?, ? ,? ,? ,? ,?)', [rt_cate, rt_name, rt_desc, rt_img, rt_img2, rt_img3, rt_img4, rt_img5, rt_tel, rt_location], (err, result) => {
+      if (err) {
+        console.log('DB입력 실패 : ', err);
+        return res.status(500).json({ error: '맛집등록 실패' });
+      }
+      res.json({ success: '등록 완료' });
+    }
+  )
+})
+
+
+// 맛집 정보 삭제하기 (관리자 기능)
+router.delete('/admin/restaurant/:rt_no', (req, res) =>{
+  const rt_no = req.params.rt_no;
+  connection.query(
+    'DELETE FROM restaurant WHERE rt_no= ?', [rt_no],
+    (err, result) => {
+      if(err){
+        console.log('삭제 오류 : ', err);
+        return res.status(500).json({ error: '삭제 실패'});
+      }
+      res.json({ success: '삭제 완료'});
+    }
+  )
+})
+
+// 맛집 정보 수정하기 (관리자 기능)
+
 module.exports = router;
