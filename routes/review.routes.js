@@ -8,9 +8,10 @@ const connection = require('../config/db');
 // 메인
 router.get('/review/all', (req, res) => {
   connection.query(
-    `SELECT br.*, r.rt_name, r.rt_cate, r.rt_location
+    `SELECT br.*, r.rt_name, r.rt_cate, r.rt_location, u.u_nick
     FROM board_review br
     INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+    INNER JOIN users u ON br.br_user_no = u.u_no
     ORDER BY br_date DESC`,
     (err, result) => {
       if (err) return res.status(500).json({ error: 'DB 조회 오류' });
@@ -21,21 +22,51 @@ router.get('/review/all', (req, res) => {
 
 // 서브
 router.get('/review', (req, res) => {
-  const { rt_no, user_no } = req.query;
+  const { rt_no, user_no, board_cate } = req.query;
 
-  let sql = `
-    SELECT br.*, r.rt_name, r.rt_cate, r.rt_location
-    FROM board_review br
-    INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
-  `;
+  let sql = '';
   let params = [];
 
   if (rt_no) {
-    sql += ' WHERE r.rt_no = ? ORDER BY br_date DESC'; // 맛집 상세
+    sql = `
+      SELECT br.*, r.rt_name, r.rt_cate, r.rt_location
+      FROM board_review br
+      INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+      WHERE r.rt_no = ? 
+      ORDER BY br_date DESC
+    `; // 맛집 상세
     params.push(rt_no);
   } else if (user_no) {
-    sql += ' WHERE br.br_user_no = ? ORDER BY br_date DESC'; // 마이페이지 - 작성한 게시글
+    if (board_cate === 'write') {
+      sql = `
+        SELECT br.*, r.rt_name, r.rt_cate, r.rt_location
+        FROM board_review br
+        INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+        WHERE br.br_user_no = ? 
+        ORDER BY br_no DESC
+      `; // 마이페이지 - 작성한 게시글
+    } else if (board_cate == 'like') {
+      sql = `
+        SELECT *
+        FROM heart h
+        INNER JOIN board_review br ON h.ht_board_no = br.br_no
+        INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+        WHERE h.ht_user_no = ? AND h.ht_board_cate = 'review'
+        ORDER BY h.ht_no DESC
+      `; // 마이페이지 - 내가 남긴 좋아요
+    } else {
+      sql = `
+        SELECT *
+        FROM comment c
+        INNER JOIN board_review br ON c.ct_board_no = br.br_no
+        INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+        WHERE c.ct_user_no = ? AND c.ct_board_cate = 'review'
+        ORDER BY c.ct_no DESC
+      `; // 마이페이지 - 내가 남긴 댓글
+    }
     params.push(user_no);
+  } else {
+    return res.status(400).json({ error: 'rt_no 또는 user_no가 필요합니다' });
   }
 
   connection.query(sql, params, (err, result) => {
@@ -216,16 +247,16 @@ router.post('/restaurant/input', (req, res) => {
 
 
 // 맛집 정보 삭제하기 (관리자 기능)
-router.delete('/admin/restaurant/:rt_no', (req, res) =>{
+router.delete('/admin/restaurant/:rt_no', (req, res) => {
   const rt_no = req.params.rt_no;
   connection.query(
     'DELETE FROM restaurant WHERE rt_no= ?', [rt_no],
     (err, result) => {
-      if(err){
+      if (err) {
         console.log('삭제 오류 : ', err);
-        return res.status(500).json({ error: '삭제 실패'});
+        return res.status(500).json({ error: '삭제 실패' });
       }
-      res.json({ success: '삭제 완료'});
+      res.json({ success: '삭제 완료' });
     }
   )
 })

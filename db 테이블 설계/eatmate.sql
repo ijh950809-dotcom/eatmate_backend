@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-02-03 12:55
+-- 생성 시간: 26-02-05 03:02
 -- 서버 버전: 10.4.32-MariaDB
 -- PHP 버전: 8.0.30
 
@@ -205,8 +205,8 @@ INSERT INTO `board_review` (`br_no`, `br_board_cate`, `br_user_no`, `br_rank`, `
 
 CREATE TABLE `bookmark` (
   `bk_no` int(11) NOT NULL COMMENT '북마크 번호',
-  `bk_user_no` int(11) NOT NULL COMMENT '회원 번호 (users.no)',
-  `bk_rt_no` int(11) NOT NULL COMMENT '맛집 번호 (restaurant.no)',
+  `bk_user_no` int(10) UNSIGNED NOT NULL COMMENT '회원 번호 (users.u_no)',
+  `bk_rt_no` int(10) UNSIGNED NOT NULL COMMENT '맛집 번호 (restaurant.rt_no)',
   `bk_date` datetime NOT NULL DEFAULT current_timestamp() COMMENT '북마크 등록일'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='맛집 북마크 테이블';
 
@@ -540,7 +540,21 @@ INSERT INTO `heart` (`ht_no`, `ht_user_no`, `ht_board_cate`, `ht_board_no`, `ht_
 (415, 32, 'review', 52, '2026-02-03 17:00:42'),
 (416, 32, 'review', 1, '2026-02-03 17:00:47'),
 (417, 32, 'meetup', 1, '2026-02-03 17:01:43'),
-(418, 32, 'community', 15, '2026-02-03 17:01:48');
+(418, 32, 'community', 15, '2026-02-03 17:01:48'),
+(419, 32, 'meetup', 11, '2026-02-03 21:54:29');
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `meetup_join`
+--
+
+CREATE TABLE `meetup_join` (
+  `mj_no` int(10) UNSIGNED NOT NULL,
+  `bm_no` int(10) UNSIGNED NOT NULL,
+  `u_no` int(10) UNSIGNED NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -714,7 +728,7 @@ INSERT INTO `users` (`u_no`, `u_id`, `u_pw`, `u_nick`, `u_desc`, `u_pic`, `u_bad
 (28, 'user28', 'user28', '지도저장28', '지도에 맛집 저장 중.', 'user28.png', 'normal', '2024-01-28 11:50:00'),
 (29, 'user29', 'user29', '원정러29', '멀어도 맛집이면 갑니다.', 'user29.png', 'gold', '2024-01-29 12:00:00'),
 (30, 'user30', 'user30', '올드테이스트30', '옛날 감성 식당 좋아요.', 'user30.png', 'normal', '2024-01-30 12:10:00'),
-(32, 'test', '$2b$10$QPDhQEfL.eJt.1dJWs.3IOxu5OkHsStkIvgp5Akiw5gAox4Xpe4YS', 'test', '', 'test.jpg', 'normal', '2026-02-03 16:52:36');
+(32, 'test', '$2b$10$aYnTbBZGUoTQs0s0h8KrIOKMCZquCGBUqJXivSFD8kjvwfoHreQ.a', 'test', '비밀번호는 2222입니당', 'user_1770181831226.jpg', 'gold', '2026-02-03 16:52:36');
 
 --
 -- 덤프된 테이블의 인덱스
@@ -754,7 +768,8 @@ ALTER TABLE `board_review`
 --
 ALTER TABLE `bookmark`
   ADD PRIMARY KEY (`bk_no`),
-  ADD UNIQUE KEY `uk_user_restaurant` (`bk_user_no`,`bk_rt_no`);
+  ADD UNIQUE KEY `uk_user_restaurant` (`bk_user_no`,`bk_rt_no`),
+  ADD KEY `fk_bk_restaurant` (`bk_rt_no`);
 
 --
 -- 테이블의 인덱스 `comment`
@@ -772,6 +787,14 @@ ALTER TABLE `heart`
   ADD UNIQUE KEY `uq_heart` (`ht_user_no`,`ht_board_cate`,`ht_board_no`),
   ADD KEY `idx_heart_board` (`ht_board_cate`,`ht_board_no`),
   ADD KEY `idx_heart_user` (`ht_user_no`,`ht_date`);
+
+--
+-- 테이블의 인덱스 `meetup_join`
+--
+ALTER TABLE `meetup_join`
+  ADD PRIMARY KEY (`mj_no`),
+  ADD UNIQUE KEY `uniq_meetup_user` (`bm_no`,`u_no`),
+  ADD KEY `fk_user` (`u_no`);
 
 --
 -- 테이블의 인덱스 `restaurant`
@@ -800,25 +823,25 @@ ALTER TABLE `admin_users`
 -- 테이블의 AUTO_INCREMENT `board_community`
 --
 ALTER TABLE `board_community`
-  MODIFY `bc_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '자유게시판 게시글 번호', AUTO_INCREMENT=17;
+  MODIFY `bc_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '자유게시판 게시글 번호', AUTO_INCREMENT=18;
 
 --
 -- 테이블의 AUTO_INCREMENT `board_meetup`
 --
 ALTER TABLE `board_meetup`
-  MODIFY `bm_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '탐방 게시글 번호', AUTO_INCREMENT=11;
+  MODIFY `bm_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '탐방 게시글 번호', AUTO_INCREMENT=12;
 
 --
 -- 테이블의 AUTO_INCREMENT `board_review`
 --
 ALTER TABLE `board_review`
-  MODIFY `br_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '리뷰 게시글 번호', AUTO_INCREMENT=53;
+  MODIFY `br_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '리뷰 게시글 번호', AUTO_INCREMENT=54;
 
 --
 -- 테이블의 AUTO_INCREMENT `bookmark`
 --
 ALTER TABLE `bookmark`
-  MODIFY `bk_no` int(11) NOT NULL AUTO_INCREMENT COMMENT '북마크 번호';
+  MODIFY `bk_no` int(11) NOT NULL AUTO_INCREMENT COMMENT '북마크 번호', AUTO_INCREMENT=25;
 
 --
 -- 테이블의 AUTO_INCREMENT `comment`
@@ -830,7 +853,13 @@ ALTER TABLE `comment`
 -- 테이블의 AUTO_INCREMENT `heart`
 --
 ALTER TABLE `heart`
-  MODIFY `ht_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '하트 번호', AUTO_INCREMENT=419;
+  MODIFY `ht_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '하트 번호', AUTO_INCREMENT=420;
+
+--
+-- 테이블의 AUTO_INCREMENT `meetup_join`
+--
+ALTER TABLE `meetup_join`
+  MODIFY `mj_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- 테이블의 AUTO_INCREMENT `restaurant`
@@ -869,6 +898,13 @@ ALTER TABLE `board_review`
   ADD CONSTRAINT `fk_review_user` FOREIGN KEY (`br_user_no`) REFERENCES `users` (`u_no`);
 
 --
+-- 테이블의 제약사항 `bookmark`
+--
+ALTER TABLE `bookmark`
+  ADD CONSTRAINT `fk_bk_restaurant` FOREIGN KEY (`bk_rt_no`) REFERENCES `restaurant` (`rt_no`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_bk_user` FOREIGN KEY (`bk_user_no`) REFERENCES `users` (`u_no`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- 테이블의 제약사항 `comment`
 --
 ALTER TABLE `comment`
@@ -879,6 +915,13 @@ ALTER TABLE `comment`
 --
 ALTER TABLE `heart`
   ADD CONSTRAINT `fk_ht_user` FOREIGN KEY (`ht_user_no`) REFERENCES `users` (`u_no`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- 테이블의 제약사항 `meetup_join`
+--
+ALTER TABLE `meetup_join`
+  ADD CONSTRAINT `fk_meetup` FOREIGN KEY (`bm_no`) REFERENCES `board_meetup` (`bm_no`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_user` FOREIGN KEY (`u_no`) REFERENCES `users` (`u_no`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
