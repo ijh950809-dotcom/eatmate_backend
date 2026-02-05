@@ -5,7 +5,7 @@ const multer = require('multer');
 const path = require('path');
 
 const connection = require('../config/db');
-const { SECRET_KEY, EXPIRES_IN } = require('../config/jwt');
+const { SECRET_KEY } = require('../config/jwt');
 
 // 업로드 저장 위치/파일명 설정
 const storage = multer.diskStorage({
