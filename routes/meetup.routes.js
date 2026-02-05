@@ -190,6 +190,21 @@ router.delete('/meetup_join', (req, res) => {
   );
 })
 
+//맛집 탐방 게시글 삭제하기 (관리자페이지)
+router.delete('/admin/meetup/:bm_no', (req, res) =>{
+  const bm_no = req.params.bm_no;
+  connection.query(
+    'DELETE FROM board_meetup WHERE bm_no = ?', [bm_no],
+    (err, result) => {
+      if (err){
+        console.log('삭제 오류 : ', err);
+        return res.status(500).json({ error: '삭제 실패' });
+      }
+      res.json({ success: '삭제 완료'});
+    }
+  )
+})
+
 
 
 

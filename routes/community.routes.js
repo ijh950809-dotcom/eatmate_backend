@@ -75,7 +75,7 @@ router.get('/community/detail/:bc_no', (req, res) => {
         console.log('조회 오류 : ', err);
         return res.status(500).json({ error: '조회 실패' });
       }
-      return res.json(results);
+      return res.json(results[0]);
     }
   )
 })
@@ -99,6 +99,38 @@ router.post('/writecommunity', (req, res) => {
     }
   );
 });
+
+router.delete('/admin/community/:bc_no', (req, res) =>{
+  const bc_no = req.params.bc_no;
+  connection.query(
+    'DELETE FROM board_community WHERE bc_no = ?', [bc_no],
+    (err, result) => {
+      if (err) {
+        console.log('삭제 오류 : ', err);
+        return res.status(500).json({error: '삭제 실패'});
+      }
+      res.json({ success: '삭제 완료'});
+    }
+  )
+})
+
+// 자유게시판 게시물수정 (관리자)
+router.put('/community/update/:bc_no', (req, res) => {
+  const bc_no = req.params.bc_no;
+  const { bc_title, bc_desc} = req.body;
+
+  connection.query(
+    'UPDATE board_community SET bc_title =? , bc_desc=? where bc_no= ?', [bc_title, bc_desc, bc_no],
+    (err, result) => {
+      if (err) {
+        console.log('수정 오류 : ', err);
+        res.status(500).json({ error: '수정 실패'});
+        return;
+      }
+      res.json({ success: true});
+    }
+  )
+})
 
 
 

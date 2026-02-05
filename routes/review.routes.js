@@ -227,7 +227,7 @@ router.post('/write/review', upload.single('br_img'), (req, res) => {
 })
 
 
-// POST 맛집 등록 (관리자 기능)
+// POST 맛집(restuarant) 등록 (관리자 기능)
 router.post('/restaurant/input', (req, res) => {
   const { rt_cate, rt_name, rt_desc, rt_img, rt_img2, rt_img3, rt_img4, rt_img5, rt_tel, rt_location } = req.body;
 
@@ -246,7 +246,7 @@ router.post('/restaurant/input', (req, res) => {
 })
 
 
-// 맛집 정보 삭제하기 (관리자 기능)
+// 맛집(restuarant) 정보 삭제하기 (관리자 기능)
 router.delete('/admin/restaurant/:rt_no', (req, res) => {
   const rt_no = req.params.rt_no;
   connection.query(
@@ -261,6 +261,22 @@ router.delete('/admin/restaurant/:rt_no', (req, res) => {
   )
 })
 
-// 맛집 정보 수정하기 (관리자 기능)
+// 맛집 리뷰(review) 게시글 삭제하기 (관리자 기능)
+router.delete('/admin/review/:br_no', (req, res) =>{
+  const br_no = req.params.br_no;
+  connection.query(
+    'DELETE FROM board_review WHERE br_no = ?', [br_no],
+    (err, result) => {
+      if(err) { 
+        console.log('삭제 오류 : ', err);
+        return res.status(500).json({ error: '삭제 실패' });
+      }
+      res.json({ success: '삭제 완료'});
+    }
+  )
+})
+
+
+// 맛집(restaurant) 정보 수정하기 (관리자 기능)
 
 module.exports = router;
