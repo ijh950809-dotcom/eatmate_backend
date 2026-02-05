@@ -20,15 +20,37 @@ router.get('/communitylist', (req, res) => {
 });
 
 router.get('/community', (req, res) => {
-  const { user_no } = req.query;
+  const { user_no, board_cate } = req.query;
 
-  const sql = `
-    SELECT board_community.*, users.*
-    FROM board_community
-    INNER JOIN users ON board_community.bc_user_no = users.u_no
-    WHERE board_community.bc_user_no = ?
-    ORDER BY board_community.bc_no DESC
-  `;
+  let sql = '';
+
+  if (board_cate === 'write') {
+    sql = `
+      SELECT board_community.*, users.*
+      FROM board_community
+      INNER JOIN users ON board_community.bc_user_no = users.u_no
+      WHERE board_community.bc_user_no = ?
+      ORDER BY board_community.bc_no DESC
+    `; // 마이페이지 - 작성한 게시글
+  } else if (board_cate == 'like') {
+    sql = `
+      SELECT *
+      FROM heart h
+      INNER JOIN board_community bc ON h.ht_board_no = bc.bc_no
+      INNER JOIN users u ON bc.bc_user_no = u.u_no
+      WHERE h.ht_user_no = ? AND h.ht_board_cate = 'community'
+      ORDER BY h.ht_no DESC
+    `; // 마이페이지 - 내가 남긴 좋아요
+  } else {
+    sql = `
+      SELECT *
+      FROM comment c
+      INNER JOIN board_community bc ON c.ct_board_no = bc.bc_no
+      INNER JOIN users u ON bc.bc_user_no = u.u_no
+      WHERE c.ct_user_no = ? AND c.ct_board_cate = 'community'
+      ORDER BY c.ct_no DESC
+    `; // 마이페이지 - 내가 남긴 댓글
+  }
 
   connection.query(sql, [user_no], (err, results) => {
     if (err) {
