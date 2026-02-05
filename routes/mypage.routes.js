@@ -80,4 +80,24 @@ router.put('/mypage/profile/modify', upload.single('u_pic'), async (req, res) =>
   }
 });
 
+
+//////////////마이페이지 맛집탐방 신청내역
+router.get('/mymeetup', (req, res) => {
+  const { user_no } = req.query;
+
+  connection.query(
+    `SELECT board_meetup.*, board_meetup.bm_no FROM board_meetup INNER JOIN meetup_join ON board_meetup.bm_no = meetup_join.bm_no WHERE u_no=?`, [user_no], (err, result) => {
+      if (err) {
+        console.log('조회오류', err);
+        return res.status(500).json({ error: '조회실패' });
+      }
+      if (result.length == 0) {
+        res.status(404).json({ error: '데이터없음' });
+        return;
+      }
+      res.json(result);
+    }
+  )
+})
+
 module.exports = router;
