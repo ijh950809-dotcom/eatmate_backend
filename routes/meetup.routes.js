@@ -19,21 +19,48 @@ router.get('/meetup/all', (req, res) => {
 
 // 맛집 탐방 meetup - 상세 조회
 router.get('/meetup', (req, res) => {
-  const { bm_no, user_no } = req.query;
+  const { bm_no, user_no, board_cate } = req.query;
 
-  let sql = `
-    SELECT board_meetup.*, users.u_nick, users.u_pic 
-    FROM board_meetup 
-    INNER JOIN users ON board_meetup.bm_user_no = users.u_no 
-  `
+  let sql = '';
   let params = [];
 
   if (bm_no) {
-    sql += 'WHERE bm_no = ?'; // 맛집 탐방 상세
+    sql = `
+      SELECT board_meetup.*, users.u_nick, users.u_pic 
+      FROM board_meetup 
+      INNER JOIN users ON board_meetup.bm_user_no = users.u_no 
+      WHERE bm_no = ?
+    `; // 맛집 탐방 상세
     params.push(bm_no);
   } else if (user_no) {
-    sql += 'WHERE bm_user_no = ? ORDER BY bm_no DESC'; // 마이페이지 - 작성한 게시글
+    if (board_cate === 'write') {
+      sql = `
+        SELECT board_meetup.*, users.u_nick, users.u_pic 
+        FROM board_meetup 
+        INNER JOIN users ON board_meetup.bm_user_no = users.u_no
+        WHERE bm_user_no = ? 
+        ORDER BY bm_no DESC
+        `; // 마이페이지 - 작성한 게시글
+    } else if (board_cate == 'like') {
+      sql = `
+        SELECT *
+        FROM heart h
+        INNER JOIN board_meetup bm ON h.ht_board_no = bm.bm_no
+        WHERE h.ht_user_no = ? AND h.ht_board_cate = 'meetup'
+        ORDER BY h.ht_no DESC
+      `; // 마이페이지 - 내가 남긴 좋아요
+    } else {
+      sql = `
+        SELECT *
+        FROM comment c
+        INNER JOIN board_meetup bm ON c.ct_board_no = bm.bm_no
+        WHERE c.ct_user_no = ? AND c.ct_board_cate = 'meetup'
+        ORDER BY c.ct_no DESC
+      `; // 마이페이지 - 내가 남긴 댓글
+    }
     params.push(user_no);
+  } else {
+    return res.status(400).json({ error: 'bm_no 또는 user_no가 필요합니다' });
   }
 
   connection.query(sql, params, (err, results) => {
@@ -177,6 +204,8 @@ router.delete('/admin/meetup/:bm_no', (req, res) =>{
     }
   )
 })
+
+
 
 
 

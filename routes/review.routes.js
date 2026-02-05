@@ -22,21 +22,51 @@ router.get('/review/all', (req, res) => {
 
 // 서브
 router.get('/review', (req, res) => {
-  const { rt_no, user_no } = req.query;
+  const { rt_no, user_no, board_cate } = req.query;
 
-  let sql = `
-    SELECT br.*, r.rt_name, r.rt_cate, r.rt_location
-    FROM board_review br
-    INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
-  `;
+  let sql = '';
   let params = [];
 
   if (rt_no) {
-    sql += ' WHERE r.rt_no = ? ORDER BY br_date DESC'; // 맛집 상세
+    sql = `
+      SELECT br.*, r.rt_name, r.rt_cate, r.rt_location
+      FROM board_review br
+      INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+      WHERE r.rt_no = ? 
+      ORDER BY br_date DESC
+    `; // 맛집 상세
     params.push(rt_no);
   } else if (user_no) {
-    sql += ' WHERE br.br_user_no = ? ORDER BY br_date DESC'; // 마이페이지 - 작성한 게시글
+    if (board_cate === 'write') {
+      sql = `
+        SELECT br.*, r.rt_name, r.rt_cate, r.rt_location
+        FROM board_review br
+        INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+        WHERE br.br_user_no = ? 
+        ORDER BY br_no DESC
+      `; // 마이페이지 - 작성한 게시글
+    } else if (board_cate == 'like') {
+      sql = `
+        SELECT *
+        FROM heart h
+        INNER JOIN board_review br ON h.ht_board_no = br.br_no
+        INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+        WHERE h.ht_user_no = ? AND h.ht_board_cate = 'review'
+        ORDER BY h.ht_no DESC
+      `; // 마이페이지 - 내가 남긴 좋아요
+    } else {
+      sql = `
+        SELECT *
+        FROM comment c
+        INNER JOIN board_review br ON c.ct_board_no = br.br_no
+        INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+        WHERE c.ct_user_no = ? AND c.ct_board_cate = 'review'
+        ORDER BY c.ct_no DESC
+      `; // 마이페이지 - 내가 남긴 댓글
+    }
     params.push(user_no);
+  } else {
+    return res.status(400).json({ error: 'rt_no 또는 user_no가 필요합니다' });
   }
 
   connection.query(sql, params, (err, result) => {
