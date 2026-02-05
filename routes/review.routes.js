@@ -8,9 +8,10 @@ const connection = require('../config/db');
 // 메인
 router.get('/review/all', (req, res) => {
   connection.query(
-    `SELECT br.*, r.rt_name, r.rt_cate, r.rt_location
+    `SELECT br.*, r.rt_name, r.rt_cate, r.rt_location, u.u_nick
     FROM board_review br
     INNER JOIN restaurant r ON br.br_rt_no = r.rt_no
+    INNER JOIN users u ON br.br_user_no = u.u_no
     ORDER BY br_date DESC`,
     (err, result) => {
       if (err) return res.status(500).json({ error: 'DB 조회 오류' });
@@ -216,16 +217,16 @@ router.post('/restaurant/input', (req, res) => {
 
 
 // 맛집 정보 삭제하기 (관리자 기능)
-router.delete('/admin/restaurant/:rt_no', (req, res) =>{
+router.delete('/admin/restaurant/:rt_no', (req, res) => {
   const rt_no = req.params.rt_no;
   connection.query(
     'DELETE FROM restaurant WHERE rt_no= ?', [rt_no],
     (err, result) => {
-      if(err){
+      if (err) {
         console.log('삭제 오류 : ', err);
-        return res.status(500).json({ error: '삭제 실패'});
+        return res.status(500).json({ error: '삭제 실패' });
       }
-      res.json({ success: '삭제 완료'});
+      res.json({ success: '삭제 완료' });
     }
   )
 })
