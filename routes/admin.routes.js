@@ -61,26 +61,40 @@ router.post('/admin/join', upload.single('au_pic'), async (req, res) => {
 router.post('/admin/login', (req, res) => {
   const { au_id, au_pw } = req.body;
 
-  connection.query('SELECT * FROM admin_users WHERE au_id=?', [au_id], async (err, result) => {
-    if (err || result.length == 0) {
-      return res.status(401).json({
-        error: "아이디 또는 비밀번호가 틀립니다."
-      });
+  connection.query(
+    'SELECT * FROM admin_users WHERE au_id = ?',
+    [au_id],
+    async (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: '서버 오류' });
+      }
+
+      if (result.length === 0) {
+        return res.status(404).json({ error: '존재하지 않는 아이디입니다. 재확인 후 다시 시도해주세요.' });
+      }
+
+      const user = result[0];
+      const isMatch = await bcrypt.compare(au_pw, user.au_pw);
+
+      if (!isMatch) {
+        return res.status(401).json({ error: '비밀번호가 틀렸습니다. 재확인 후 다시 시도해주세요.' });
+      }
+
+      const token = jwt.sign(
+        {
+          token_no: user.au_no,
+          token_id: user.au_id,
+          token_name: user.au_name,
+          token_profile: user.au_pic,
+        },
+        SECRET_KEY,
+        { expiresIn: '1h' }
+      );
+
+      res.json({ token });
     }
-    const user = result[0];
-    const isMatch = await bcrypt.compare(au_pw, user.au_pw);
-    if (!isMatch) {
-      return res.status(401).json({ error: '아이디 또는 비밀번호가 틀립니다.' });
-    }
-    const token = jwt.sign({
-      au_id: user.au_id,
-    },
-      SECRET_KEY, {
-      expiresIn: '1h'
-    });
-    res.json({ token });
-  });
-});
+  )
+})
 
 // [회원 관리 - 회원 목록] 출력
 router.get('/admin/user', (req, res) => {
