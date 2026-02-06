@@ -191,19 +191,60 @@ router.delete('/meetup_join', (req, res) => {
 })
 
 //맛집 탐방 게시글 삭제하기 (관리자페이지)
-router.delete('/admin/meetup/:bm_no', (req, res) =>{
+router.delete('/admin/meetup/:bm_no', (req, res) => {
   const bm_no = req.params.bm_no;
   connection.query(
     'DELETE FROM board_meetup WHERE bm_no = ?', [bm_no],
     (err, result) => {
-      if (err){
+      if (err) {
         console.log('삭제 오류 : ', err);
         return res.status(500).json({ error: '삭제 실패' });
       }
-      res.json({ success: '삭제 완료'});
+      res.json({ success: '삭제 완료' });
+    }
+  )
+});
+
+//맛집탐방 게시글 수정 - 조회
+router.get('/meetup/modify/:bm_no', (req, res) => {
+  const bm_no = req.params.bm_no;
+  connection.query(
+    'SELECT * FROM board_meetup WHERE bm_no=?', [bm_no], (err, result) => {
+      if (err) {
+        console.log('조회오류: ', err);
+        res.status(500).json({ error: '게시글 조회 실패' });
+        return;
+      }
+      if (result.length == 0) {
+        res.status(404).json({ error: '해당게시글이 존재하지 않습니다.' });
+        return;
+      }
+      res.json(result[0]);
     }
   )
 })
+//수정
+router.put('/meetup/update/:bm_no', (req, res) => {
+  const bm_no = req.params.bm_no;
+  const { bm_m_res, bm_img, bm_title, bm_desc, bm_m_date, bm_m_people_all } = req.body;
+
+  //유효성검사
+
+
+  //업데이트
+  connection.query(
+    'UPDATE board_meetup SET bm_m_res=?, bm_title=?, bm_desc=?,bm_m_date=?,bm_m_people_all=? WHERE bm_no=?', [bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all, bm_no], (err, result) => {
+      if (err) {
+        console.log('수정오류:', err);
+        res.status(500).json({ error: '수정실패' })
+        return;
+      }
+      res.json({ success: true });
+    }
+  )
+})
+
+
 
 
 
