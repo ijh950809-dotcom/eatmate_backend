@@ -99,5 +99,21 @@ router.get('/mymeetup', (req, res) => {
     }
   )
 })
+////삭제
+router.delete('/delmeetup/:bm_no', (req, res) => {
+  const bm_no = req.params.bm_no;
+  connection.query(
+    'DELETE FROM board_meetup WHERE bm_no=?', [bm_no],
+    (err, result) => {
+      if (err) {
+        console.log('삭제오류:', err);
+        res.status(500).json
+          ({ error: '삭제실패' });
+        return;
+      }
+      res.json({ success: true })
+    }
+  );
+})
 
 module.exports = router;
