@@ -96,7 +96,80 @@ router.post('/admin/login', (req, res) => {
   )
 })
 
-// [회원 관리 - 회원 목록] 출력
+/*** 관리자_맛집 관리 ***/
+// [맛집 등록]
+const storage2 = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/restaurant'),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `restaurant_${Date.now()}${ext}`);
+  }
+});
+
+const upload2 = multer({
+  storage: storage2,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('이미지 파일만 업로드 가능합니다.'));
+    }
+    cb(null, true);
+  },
+});
+
+router.post('/admin/restaurant', upload2.single('rt_img'), (req, res) => {
+  const { rt_name, rt_desc, rt_cate, rt_location, rt_tel } = req.body;
+  const rt_img = req.file ? req.file.filename : null;
+
+  connection.query(
+    'INSERT INTO restaurant (rt_img, rt_name, rt_desc, rt_cate, rt_location, rt_tel) VALUES (?, ?, ?, ?, ?, ?)',
+    [rt_img, rt_name, rt_desc, rt_cate, rt_location, rt_tel],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'DB 맛집 등록 실패' });
+      }
+      res.json({ success: '등록 완료' });
+    }
+  )
+})
+
+
+// 맛집(restuarant) 정보 삭제하기 (관리자 기능)
+router.delete('/admin/restaurant/:rt_no', (req, res) => {
+  const rt_no = req.params.rt_no;
+  connection.query(
+    'DELETE FROM restaurant WHERE rt_no= ?', [rt_no],
+    (err, result) => {
+      if (err) {
+        console.log('삭제 오류 : ', err);
+        return res.status(500).json({ error: '삭제 실패' });
+      }
+      res.json({ success: '삭제 완료' });
+    }
+  )
+})
+
+// 맛집 리뷰(review) 게시글 삭제하기 (관리자 기능)
+router.delete('/admin/review/:br_no', (req, res) => {
+  const br_no = req.params.br_no;
+  connection.query(
+    'DELETE FROM board_review WHERE br_no = ?', [br_no],
+    (err, result) => {
+      if (err) {
+        console.log('삭제 오류 : ', err);
+        return res.status(500).json({ error: '삭제 실패' });
+      }
+      res.json({ success: '삭제 완료' });
+    }
+  )
+})
+
+
+// 맛집(restaurant) 정보 수정하기 (관리자 기능)
+
+/*** 회원 관리 ***/
+// [회원 목록] 출력
 router.get('/admin/user', (req, res) => {
   connection.query('SELECT * FROM users ORDER BY u_no DESC', (err, results) => {
     if (err) {
@@ -107,7 +180,7 @@ router.get('/admin/user', (req, res) => {
   });
 });
 
-// [회원 관리 - 회원 목록] 삭제
+// [회원 목록] 삭제
 router.delete('/admin/user/:u_no', (req, res) => {
   const u_no = req.params.u_no;
 
