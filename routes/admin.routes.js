@@ -97,7 +97,6 @@ router.post('/admin/login', (req, res) => {
 })
 
 /*** 관리자_맛집 관리 ***/
-// [맛집 등록]
 const storage2 = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/restaurant'),
   filename: (req, file, cb) => {
@@ -117,6 +116,7 @@ const upload2 = multer({
   },
 });
 
+// [맛집 등록]
 router.post('/admin/restaurant', upload2.single('rt_img'), (req, res) => {
   const { rt_name, rt_desc, rt_cate, rt_location, rt_tel } = req.body;
   const rt_img = req.file ? req.file.filename : null;
@@ -134,8 +134,7 @@ router.post('/admin/restaurant', upload2.single('rt_img'), (req, res) => {
   )
 })
 
-
-// 맛집(restuarant) 정보 삭제하기 (관리자 기능)
+// [맛집 목록] 삭제
 router.delete('/admin/restaurant/:rt_no', (req, res) => {
   const rt_no = req.params.rt_no;
   connection.query(
@@ -150,7 +149,8 @@ router.delete('/admin/restaurant/:rt_no', (req, res) => {
   )
 })
 
-// 맛집 리뷰(review) 게시글 삭제하기 (관리자 기능)
+/*** 관리자_게시판 관리 ***/
+// [맛집 리뷰 목록] 삭제
 router.delete('/admin/review/:br_no', (req, res) => {
   const br_no = req.params.br_no;
   connection.query(
@@ -164,9 +164,6 @@ router.delete('/admin/review/:br_no', (req, res) => {
     }
   )
 })
-
-
-// 맛집(restaurant) 정보 수정하기 (관리자 기능)
 
 /*** 회원 관리 ***/
 // [회원 목록] 출력
