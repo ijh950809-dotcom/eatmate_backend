@@ -149,6 +149,69 @@ router.delete('/admin/restaurant/:rt_no', (req, res) => {
   )
 })
 
+// [맛집 수정] 조회
+router.get('/admin/restaurant/:rt_no', (req, res) => {
+  const { rt_no } = req.params;
+
+  connection.query(
+    'SELECT * FROM restaurant WHERE rt_no = ?',
+    [rt_no],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'DB 맛집 조회 실패' });
+      }
+      res.json(result[0]);
+    }
+  )
+})
+
+// [맛집 수정] 수정
+router.put('/admin/restaurant', upload2.single('rt_img'), (req, res) => {
+  const { rt_no, rt_name, rt_desc, rt_cate, rt_location, rt_tel } = req.body;
+  const rt_img = req.file ? req.file.filename : null;
+
+  // 이미지 파일을 재선택 했을 떄 쿼리문
+  const sqlWithPic = `
+  UPDATE restaurant 
+  SET rt_img = ?, rt_name = ?, rt_desc = ?, rt_cate = ?, rt_location = ?, rt_tel = ?
+  WHERE rt_no = ?
+  `
+
+  // 이미지 파일을 재선택 안했을 때 쿼리문
+  const sqlWithoutPic = `
+    UPDATE restaurant 
+    SET rt_name = ?, rt_desc = ?, rt_cate = ?, rt_location = ?, rt_tel = ?
+    WHERE rt_no = ?
+  `;
+
+  if (req.file) {
+    connection.query(
+      sqlWithPic,
+      [rt_img, rt_name, rt_desc, rt_cate, rt_location, rt_tel, rt_no],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: 'DB 맛집 수정 실패' });
+        }
+        res.json({ success: '수정 완료' });
+      }
+    )
+  } else {
+    connection.query(
+      sqlWithoutPic,
+      [rt_name, rt_desc, rt_cate, rt_location, rt_tel, rt_no],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: 'DB 맛집 수정 실패' });
+        }
+        res.json({ success: '수정 완료' });
+      }
+    )
+  }
+})
+
 /*** 관리자_게시판 관리 ***/
 // [맛집 리뷰 목록] 삭제
 router.delete('/admin/review/:br_no', (req, res) => {
