@@ -98,7 +98,7 @@ router.post('/admin/login', (req, res) => {
 
 // [회원 관리 - 회원 목록] 출력
 router.get('/admin/user', (req, res) => {
-  connection.query('SELECT * FROM users', (err, results) => {
+  connection.query('SELECT * FROM users ORDER BY u_no DESC', (err, results) => {
     if (err) {
       console.log('쿼리문 오류:', err);
       return res.status(500).json({ error: '쿼리문 오류' });
