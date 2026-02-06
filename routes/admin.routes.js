@@ -80,7 +80,7 @@ router.post('/admin/login', (req, res) => {
         return res.status(401).json({ error: '비밀번호가 틀렸습니다. 재확인 후 다시 시도해주세요.' });
       }
 
-      const token = jwt.sign(
+      const adminToken = jwt.sign(
         {
           token_no: user.au_no,
           token_id: user.au_id,
@@ -91,7 +91,7 @@ router.post('/admin/login', (req, res) => {
         { expiresIn: '1h' }
       );
 
-      res.json({ token });
+      res.json({ adminToken });
     }
   )
 })
