@@ -151,7 +151,7 @@ router.delete('/admin/restaurant/:rt_no', (req, res) => {
 
 // [맛집 수정] 조회
 router.get('/admin/restaurant/:rt_no', (req, res) => {
-  const { rt_no } = req.params;
+  const rt_no = req.params.rt_no;
 
   connection.query(
     'SELECT * FROM restaurant WHERE rt_no = ?',
@@ -226,6 +226,92 @@ router.delete('/admin/review/:br_no', (req, res) => {
       res.json({ success: '삭제 완료' });
     }
   )
+})
+
+// [맛집 리뷰 수정] 조회
+router.get('/admin/review/:br_no', (req, res) => {
+  const { br_no } = req.params;
+
+  connection.query(
+    `SELECT board_review.*, restaurant.*
+    FROM board_review 
+    INNER JOIN restaurant 
+      ON restaurant.rt_no = board_review.br_rt_no
+    WHERE br_no = ?`,
+    [br_no],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'DB 맛집 리뷰 조회 실패' });
+      }
+      res.json(result[0]);
+    }
+  )
+})
+
+// [맛집 리뷰 수정] 수정
+const storage3 = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/review'),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `review_${Date.now()}${ext}`);
+  }
+});
+
+const upload3 = multer({
+  storage: storage3,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('이미지 파일만 업로드 가능합니다.'));
+    }
+    cb(null, true);
+  },
+});
+
+router.put('/admin/review', upload3.single('br_img'), (req, res) => {
+  const { rt_no, br_desc, br_rank, br_no } = req.body;
+  const br_img = req.file ? req.file.filename : null;
+
+  // 이미지 파일을 재선택 했을 떄 쿼리문
+  const sqlWithPic = `
+    UPDATE board_review 
+    SET br_img = ?, br_rt_no = ?, br_desc = ?, br_rank = ?
+    WHERE br_no = ?
+  `;
+
+  // 이미지 파일을 재선택 안했을 때 쿼리문
+  const sqlWithoutPic = `
+    UPDATE board_review 
+    SET br_rt_no = ?, br_desc = ?, br_rank = ? 
+    WHERE br_no = ?
+  `;
+
+  if (req.file) {
+    connection.query(
+      sqlWithPic,
+      [br_img, rt_no, br_desc, br_rank, br_no],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: 'DB 맛집 리뷰 수정 실패' });
+        }
+        res.json({ success: '수정 완료' });
+      }
+    )
+  } else {
+    connection.query(
+      sqlWithoutPic,
+      [rt_no, br_desc, br_rank, br_no],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: 'DB 맛집 리뷰 수정 실패' });
+        }
+        res.json({ success: '수정 완료' });
+      }
+    )
+  }
 })
 
 /*** 회원 관리 ***/
