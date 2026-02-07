@@ -1,33 +1,17 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const path = require('path');
 
 const connection = require('../config/db');
 const { SECRET_KEY } = require('../config/jwt');
 
+// 이미지 폴더링
+const { createUploader } = require('../utils/multer');
+const uploadAdminUser = createUploader({ destination: 'uploads/admin-user', prefix: 'admin-user_' });
+const uploadRestaurant = createUploader({ destination: 'uploads/restaurant', prefix: 'restaurant_' });
+const uploadReview = createUploader({ destination: 'uploads/review', prefix: 'review_' });
+
 /*** [회원가입] ***/
-// 업로드 저장 위치/파일명 설정
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/admin-user'),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `admin-user_${Date.now()}${ext}`);
-  }
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith('image/')) {
-      return cb(new Error('이미지 파일만 업로드 가능합니다.'));
-    }
-    cb(null, true);
-  },
-});
-
 // 아이디 중복 체크
 router.post('/admin/idcheck', (req, res) => {
   const { au_id } = req.body;
@@ -40,7 +24,7 @@ router.post('/admin/idcheck', (req, res) => {
 });
 
 // 회원가입
-router.post('/admin/join', upload.single('au_pic'), async (req, res) => {
+router.post('/admin/join', uploadAdminUser.single('au_pic'), async (req, res) => {
   const { au_id, au_pw, au_name } = req.body;
   const au_pic = req.file ? req.file.filename : null;
 
@@ -97,27 +81,8 @@ router.post('/admin/login', (req, res) => {
 })
 
 /*** 관리자_맛집 관리 ***/
-const storage2 = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/restaurant'),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `restaurant_${Date.now()}${ext}`);
-  }
-});
-
-const upload2 = multer({
-  storage: storage2,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith('image/')) {
-      return cb(new Error('이미지 파일만 업로드 가능합니다.'));
-    }
-    cb(null, true);
-  },
-});
-
 // [맛집 등록]
-router.post('/admin/restaurant', upload2.single('rt_img'), (req, res) => {
+router.post('/admin/restaurant', uploadRestaurant.single('rt_img'), (req, res) => {
   const { rt_name, rt_desc, rt_cate, rt_location, rt_tel } = req.body;
   const rt_img = req.file ? req.file.filename : null;
 
@@ -167,7 +132,7 @@ router.get('/admin/restaurant/:rt_no', (req, res) => {
 })
 
 // [맛집 수정] 수정
-router.put('/admin/restaurant', upload2.single('rt_img'), (req, res) => {
+router.put('/admin/restaurant', uploadRestaurant.single('rt_img'), (req, res) => {
   const { rt_no, rt_name, rt_desc, rt_cate, rt_location, rt_tel } = req.body;
   const rt_img = req.file ? req.file.filename : null;
 
@@ -250,26 +215,7 @@ router.get('/admin/review/:br_no', (req, res) => {
 })
 
 // [맛집 리뷰 수정] 수정
-const storage3 = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/review'),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `review_${Date.now()}${ext}`);
-  }
-});
-
-const upload3 = multer({
-  storage: storage3,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith('image/')) {
-      return cb(new Error('이미지 파일만 업로드 가능합니다.'));
-    }
-    cb(null, true);
-  },
-});
-
-router.put('/admin/review', upload3.single('br_img'), (req, res) => {
+router.put('/admin/review', uploadReview.single('br_img'), (req, res) => {
   const { rt_no, br_desc, br_rank, br_no } = req.body;
   const br_img = req.file ? req.file.filename : null;
 
