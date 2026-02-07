@@ -98,7 +98,7 @@ router.post('/review/detail/:br_no', (req, res) => {
 
 /*** [맛집 - 목록] 조회 review/restaurant ***/
 router.post('/restaurant', (req, res) => {
-  const { category, filter, mypage_user } = req.body || {};
+  const { category, filter, mypage_user, search_keyword } = req.body || {};
   let orderBy = 'rt_rank DESC';
 
   if (filter === 'review') orderBy = 'rt_review DESC';
@@ -106,10 +106,15 @@ router.post('/restaurant', (req, res) => {
 
   const sql =
     category ?
-      `SELECT * FROM restaurant WHERE rt_cate = ? ORDER BY ${orderBy}` // [사용자_맛집 목록]에서 조회
+      `SELECT * 
+      FROM restaurant 
+      WHERE rt_cate = ? ${search_keyword && 'AND rt_name like ?'}
+      ORDER BY ${orderBy}` // [사용자_맛집 목록]에서 조회(search_keyword는 검색할 때만 추가)
       :
       !mypage_user ?
-        `SELECT * FROM restaurant ORDER BY rt_no DESC` // [관리자_맛집 목록]에서 조회
+        `SELECT * 
+        FROM restaurant 
+        ORDER BY rt_no DESC` // [관리자_맛집 목록]에서 조회
         :
         `SELECT bookmark.*, restaurant.* 
         FROM bookmark 
@@ -118,7 +123,11 @@ router.post('/restaurant', (req, res) => {
         WHERE bookmark.bk_user_no = ?
         ORDER BY ${orderBy}` // [사용자_마이페이지_저장한 맛집]에서 조회
 
-  const params = category ? [category] : (!mypage_user ? [] : [mypage_user]);
+  const params =
+    category ?
+      (!search_keyword ? [category] : [category, `%${search_keyword}%`])
+      :
+      (!mypage_user ? [] : [mypage_user]);
 
   connection.query(sql, params, (err, result) => {
     if (err) {
