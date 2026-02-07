@@ -114,7 +114,9 @@ router.post('/restaurant', (req, res) => {
       !mypage_user ?
         `SELECT * 
         FROM restaurant 
+        ${search_keyword && 'WHERE rt_name like ?'} 
         ORDER BY rt_no DESC` // [관리자_맛집 목록]에서 조회
+        // [사용자_맛집 리뷰 목록]에서 검색할 경우 search_keyword을 사용해서 조회
         :
         `SELECT bookmark.*, restaurant.* 
         FROM bookmark 
@@ -127,7 +129,7 @@ router.post('/restaurant', (req, res) => {
     category ?
       (!search_keyword ? [category] : [category, `%${search_keyword}%`])
       :
-      (!mypage_user ? [] : [mypage_user]);
+      (!mypage_user ? (!search_keyword ? [] : [`%${search_keyword}%`]) : ([mypage_user]));
 
   connection.query(sql, params, (err, result) => {
     if (err) {
