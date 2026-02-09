@@ -224,20 +224,39 @@ router.get('/meetup/modify/:bm_no', (req, res) => {
   )
 })
 //수정
-router.put('/meetup/update/:bm_no', (req, res) => {
+router.put('/meetup/update/:bm_no', upload.single('bm_img'), (req, res) => {
   const bm_no = req.params.bm_no;
-  const { bm_m_res, bm_img, bm_title, bm_desc, bm_m_date, bm_m_people_all } = req.body;
+  const { bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all } = req.body;
+
+  const bm_img = req.file ? req.file.filename : null;
+
+  let sql =
+    `
+  UPDATE board_meetup SET bm_m_res=?, bm_title=?, bm_desc=?,bm_m_date=?,bm_m_people_all=?
+  `;
+  const params = [
+    bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all
+  ];
+  if (bm_img) {
+    sql += ', bm_img=?';
+    params.push(bm_img);
+
+
+  }
+  sql += ' WHERE bm_no=?';
+  params.push(bm_no);
 
   //유효성검사
 
 
   //업데이트
-  connection.query(
-    'UPDATE board_meetup SET bm_m_res=?, bm_title=?, bm_desc=?,bm_m_date=?,bm_m_people_all=? WHERE bm_no=?', [bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all, bm_no], (err, result) => {
+  connection.query(sql, params,
+    // 'UPDATE board_meetup SET bm_m_res=?, bm_title=?, bm_desc=?,bm_m_date=?,bm_m_people_all=? WHERE bm_no=?', [bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all, bm_no], 
+    (err) => {
       if (err) {
         console.log('수정오류:', err);
-        res.status(500).json({ error: '수정실패' })
-        return;
+        return res.status(500).json({ error: '수정실패' });
+
       }
       res.json({ success: true });
     }
