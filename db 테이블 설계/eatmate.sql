@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-02-09 09:19
+-- 생성 시간: 26-02-09 09:24
 -- 서버 버전: 10.4.32-MariaDB
 -- PHP 버전: 8.0.30
 
@@ -32,9 +32,16 @@ CREATE TABLE `admin_users` (
   `au_id` varchar(50) NOT NULL COMMENT '관리자 아이디',
   `au_pw` varchar(255) NOT NULL COMMENT '관리자 비밀번호',
   `au_name` varchar(50) NOT NULL COMMENT '이름',
-  `au_pic` varchar(255) DEFAULT 'default-user.jpg' COMMENT '프로필 사진',
+  `au_pic` varchar(255) DEFAULT 'default-user.png' COMMENT '프로필 사진',
   `au_date` datetime DEFAULT current_timestamp() COMMENT '등록 날짜/시간'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- 테이블의 덤프 데이터 `admin_users`
+--
+
+INSERT INTO `admin_users` (`au_no`, `au_id`, `au_pw`, `au_name`, `au_pic`, `au_date`) VALUES
+(4, 'admin', '$2b$10$oQOUSDbOf26VYBQkbV0HnOGFjj1ThE3vQ7LncAH9J.VlSfhEdBF6y', '관리자', 'admin-user_1770625415740.png', '2026-02-09 17:23:35');
 
 -- --------------------------------------------------------
 
@@ -683,7 +690,7 @@ CREATE TABLE `users` (
   `u_pw` varchar(255) NOT NULL COMMENT '비밀번호',
   `u_nick` varchar(50) NOT NULL COMMENT '닉네임',
   `u_desc` text DEFAULT NULL COMMENT '내 소개글',
-  `u_pic` varchar(255) DEFAULT 'default-user.jpg' COMMENT '프로필 사진',
+  `u_pic` varchar(255) DEFAULT 'default-user.png' COMMENT '프로필 사진',
   `u_badge` varchar(20) DEFAULT 'normal' COMMENT '뱃지(vip, gold 등)',
   `u_date` datetime DEFAULT current_timestamp() COMMENT '등록 날짜/시간'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -722,7 +729,8 @@ INSERT INTO `users` (`u_no`, `u_id`, `u_pw`, `u_nick`, `u_desc`, `u_pic`, `u_bad
 (27, 'user27', 'user27', '모임러27', '맛집 모임 환영합니다.', 'user27.jpg', 'silver', '2024-01-27 11:40:00'),
 (28, 'user28', 'user28', '지도저장28', '지도에 맛집 저장 중.', 'user28.jpg', 'normal', '2024-01-28 11:50:00'),
 (29, 'user29', 'user29', '원정러29', '멀어도 맛집이면 갑니다.', 'user29.jpg', 'gold', '2024-01-29 12:00:00'),
-(30, 'user30', 'user30', '올드테이스트30', '옛날 감성 식당 좋아요.', 'user30.jpg', 'normal', '2024-01-30 12:10:00');
+(30, 'user30', 'user30', '올드테이스트30', '옛날 감성 식당 좋아요.', 'user30.jpg', 'normal', '2024-01-30 12:10:00'),
+(36, 'test', '$2b$10$y9wWVX0fuXSefrtPrjDalubSsP4zu0j5qnSb6Lql..4k1PriUCmdO', 'test', 'test test test', 'user_1770625373431.webp', 'normal', '2026-02-09 17:22:53');
 
 --
 -- 덤프된 테이블의 인덱스
@@ -811,7 +819,7 @@ ALTER TABLE `users`
 -- 테이블의 AUTO_INCREMENT `admin_users`
 --
 ALTER TABLE `admin_users`
-  MODIFY `au_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '관리자 번호', AUTO_INCREMENT=4;
+  MODIFY `au_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '관리자 번호', AUTO_INCREMENT=5;
 
 --
 -- 테이블의 AUTO_INCREMENT `board_community`
@@ -865,7 +873,7 @@ ALTER TABLE `restaurant`
 -- 테이블의 AUTO_INCREMENT `users`
 --
 ALTER TABLE `users`
-  MODIFY `u_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '회원 번호', AUTO_INCREMENT=36;
+  MODIFY `u_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '회원 번호', AUTO_INCREMENT=37;
 
 --
 -- 덤프된 테이블의 제약사항
