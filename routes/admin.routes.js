@@ -296,8 +296,6 @@ router.get('/admin/meetup/modify/:bm_no', (req, res) => {
     }
   )
 })
-// [맛집 리뷰 수정] 수정
-// 내용 추가 예정
 
 // [자유게시판 목록] 삭제
 router.delete('/admin/community/:bc_no', (req, res) => {
