@@ -26,7 +26,7 @@ router.post('/admin/idcheck', (req, res) => {
 // 회원가입
 router.post('/admin/join', uploadAdminUser.single('au_pic'), async (req, res) => {
   const { au_id, au_pw, au_name } = req.body;
-  const au_pic = req.file ? req.file.filename : null;
+  const au_pic = req.file ? req.file.filename : 'default-user.jpg';
 
   try {
     const sql = `INSERT INTO admin_users (au_id, au_pw, au_name, au_pic) VALUES (?,?,?,?)`;

@@ -28,19 +28,79 @@ router.post('/common/chat', (req, res) => {
 router.post('/comment', (req, res) => {
   const { ct_user_no, ct_board_cate, ct_board_no, ct_desc } = req.body;
 
-  connection.query(
-    'INSERT INTO comment(ct_user_no, ct_board_cate, ct_board_no, ct_desc) VALUES(?, ?, ?, ?)',
-    [ct_user_no, ct_board_cate, ct_board_no, ct_desc],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({ error: 'DB 입력 오류' })
-      }
-
-      res.json({ success: '등록 성공' });
+  // 카테고리별 매핑
+  const boardMap = {
+    review: {
+      table: 'board_review',
+      noCol: 'br_no',
+      commentCol: 'br_comment'
+    },
+    meetup: {
+      table: 'board_meetup',
+      noCol: 'bm_no',
+      commentCol: 'bm_comment'
+    },
+    community: {
+      table: 'board_community',
+      noCol: 'bc_no',
+      commentCol: 'bc_comment'
     }
-  )
-})
+  };
+
+  const boardInfo = boardMap[ct_board_cate];
+  if (!boardInfo) {
+    return res.status(400).json({ error: '잘못된 게시판 카테고리' });
+  }
+
+  const { table, noCol, commentCol } = boardInfo;
+
+  // 댓글 등록 + 댓글 수 증가
+  connection.beginTransaction(err => {
+    if (err) return res.status(500).json({ error: '트랜잭션 시작 실패' });
+
+    // 댓글 등록 쿼리문
+    connection.query(
+      'INSERT INTO comment(ct_user_no, ct_board_cate, ct_board_no, ct_desc) VALUES(?, ?, ?, ?)',
+      [ct_user_no, ct_board_cate, ct_board_no, ct_desc],
+      (err) => {
+        if (err) {
+          return connection.rollback(() => {
+            console.log(err);
+            res.status(500).json({ error: '댓글 등록 실패' });
+          });
+        }
+
+        // 댓글 수 증가 쿼리문
+        connection.query(
+          `UPDATE ${table}
+          SET ${commentCol} = ${commentCol} + 1
+          WHERE ${noCol} = ?`,
+          [ct_board_no],
+          (err) => {
+            if (err) {
+              return connection.rollback(() => {
+                console.log(err);
+                res.status(500).json({ error: '댓글 수 업데이트 실패' });
+              });
+            }
+
+            // 커밋
+            connection.commit(err => {
+              if (err) {
+                return connection.rollback(() => {
+                  res.status(500).json({ error: '트랜잭션 커밋 실패' });
+                });
+              }
+
+              res.json({ success: '댓글 등록 완료' });
+            });
+          }
+        );
+      }
+    );
+  });
+});
+
 
 /*** 하트 출력 ***/
 // board_review/board_meetup/board_community 테이블의 하트 수 업데이트

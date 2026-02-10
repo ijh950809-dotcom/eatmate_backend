@@ -31,7 +31,7 @@ const upload = multer({
 router.post('/join', upload.single('u_pic'), async (req, res) => {
   try {
     const { u_id, u_pw, u_desc } = req.body;
-    const u_pic = req.file ? req.file.filename : null;
+    const u_pic = req.file ? req.file.filename : 'default-user.jpg';
 
     const hash_pw = await bcrypt.hash(u_pw, 10);
 
