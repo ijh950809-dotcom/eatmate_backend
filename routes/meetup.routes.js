@@ -124,12 +124,28 @@ router.post('/meetup', upload.single('bm_img'), (req, res) => {
     ['meetup', bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, peopleAll, bm_img],
     (err, results) => {
       if (err) {
-        console.log('등록오류:', err);
-        return res.status(500).json({ error: '데이터 등록 실패' });
+        // console.log('등록오류:', err);
+        // return res.status(500).json({ error: '데이터 등록 실패' });
+        return connection.rollback(() => {
+          res.status(500).json({ error: '등록실패' });
+        })
       }
-      res.json({ success: true, insertId: results.insertId });
+      const bm_no = results.insertId;
+      connection.query(
+        `INSERT INTO meetup_join (bm_no,u_no) VALUES (?,?)`, [bm_no, bm_user_no],
+        (err) => {
+          if (err) {
+            return connection.rollback(() => {
+              res.status(500).json({ error: '작성자 참석 실패' });
+            })
+          }
+          res.json({ success: true, bm_no });
+        }
+      )
+      // res.json({ success: true, insertId: results.insertId });
     }
   );
+
 });
 
 ///////////////////맛집탐방 참석내역에 있는지 확인
