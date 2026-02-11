@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-02-11 06:46
+-- 생성 시간: 26-02-11 15:32
 -- 서버 버전: 10.4.32-MariaDB
 -- PHP 버전: 8.0.30
 
@@ -41,7 +41,7 @@ CREATE TABLE `admin_users` (
 --
 
 INSERT INTO `admin_users` (`au_no`, `au_id`, `au_pw`, `au_name`, `au_pic`, `au_date`) VALUES
-(1, 'admin', '$2b$10$oQOUSDbOf26VYBQkbV0HnOGFjj1ThE3vQ7LncAH9J.VlSfhEdBF6y', '관리자', 'admin-user_1770625415740.png', '2026-02-09 17:23:35');
+(1, 'admin', '$2b$10$oQOUSDbOf26VYBQkbV0HnOGFjj1ThE3vQ7LncAH9J.VlSfhEdBF6y', '관리자', 'default-user.jpg', '2026-02-09 17:23:35');
 
 -- --------------------------------------------------------
 
@@ -730,7 +730,7 @@ INSERT INTO `users` (`u_no`, `u_id`, `u_pw`, `u_nick`, `u_desc`, `u_pic`, `u_bad
 (28, 'user28', 'user28', '지도저장28', '지도에 맛집 저장 중.', 'user28.jpg', 'normal', '2026-01-28 11:50:00'),
 (29, 'user29', 'user29', '원정러29', '멀어도 맛집이면 갑니다.', 'user29.jpg', 'gold', '2026-01-29 12:00:00'),
 (30, 'user30', 'user30', '올드테이스트30', '옛날 감성 식당 좋아요.', 'user30.jpg', 'normal', '2026-01-30 12:10:00'),
-(36, 'test', '$2b$10$y9wWVX0fuXSefrtPrjDalubSsP4zu0j5qnSb6Lql..4k1PriUCmdO', 'test', 'test test test', 'user_1770625373431.webp', 'normal', '2026-02-09 17:22:53');
+(36, 'test', '$2b$10$y9wWVX0fuXSefrtPrjDalubSsP4zu0j5qnSb6Lql..4k1PriUCmdO', 'test', 'test test test', 'default-user.jpg', 'normal', '2026-02-09 17:22:53');
 
 --
 -- 덤프된 테이블의 인덱스
@@ -843,7 +843,7 @@ ALTER TABLE `board_review`
 -- 테이블의 AUTO_INCREMENT `bookmark`
 --
 ALTER TABLE `bookmark`
-  MODIFY `bk_no` int(11) NOT NULL AUTO_INCREMENT COMMENT '북마크 번호', AUTO_INCREMENT=1;
+  MODIFY `bk_no` int(11) NOT NULL AUTO_INCREMENT COMMENT '북마크 번호';
 
 --
 -- 테이블의 AUTO_INCREMENT `comment`
@@ -861,7 +861,7 @@ ALTER TABLE `heart`
 -- 테이블의 AUTO_INCREMENT `meetup_join`
 --
 ALTER TABLE `meetup_join`
-  MODIFY `mj_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  MODIFY `mj_no` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- 테이블의 AUTO_INCREMENT `restaurant`
