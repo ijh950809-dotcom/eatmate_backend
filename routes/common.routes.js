@@ -38,6 +38,21 @@ router.post('/common/chat', (req, res) => {
   )
 })
 
+  //댓글 삭제
+  router.delete('/chat/comment/:ct_no', (req, res) => {
+    const ct_no = req.params.ct_no;
+    connection.query(
+      'DELETE FROM comment WHERE ct_no = ?', [ct_no],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: '삭제 실패' });
+        }
+        return res.json(results)
+      }
+    )
+  })
+
 // 댓글 입력
 router.post('/comment', (req, res) => {
   const { ct_user_no, ct_board_cate, ct_board_no, ct_desc } = req.body;
