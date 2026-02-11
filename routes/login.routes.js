@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
+// const authMiddleware = require('../config/authMiddleware');
 
 const connection = require('../config/db');
 const { SECRET_KEY } = require('../config/jwt');
