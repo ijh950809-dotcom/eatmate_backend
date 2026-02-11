@@ -141,4 +141,45 @@ router.delete('/delmeetup/:bm_no', (req, res) => {
   );
 })
 
+//수정
+router.put('/mypage/profile/modify/:user_no', upload.single('u_pic'), (req, res) => {
+  const { user_no } = req.params;
+  const { u_nick, u_desc } = req.body;
+
+  const sqlWithPic = `
+    UPDATE users
+    SET u_nick = ?, u_desc = ?, u_pic = ?
+    WHERE u_no = ?
+  `;
+
+  const sqlWithoutPic = `
+    UPDATE users
+    SET u_nick = ?, u_desc = ?
+    WHERE u_no = ?
+  `;
+
+  if (req.file) {
+    const u_pic = req.file.filename;
+
+    connection.query(
+      sqlWithPic,
+      [u_nick, u_desc, u_pic, user_no],
+      (err) => {
+        if (err) return res.status(500).json({ error: '프로필 수정 실패' });
+        return res.json({ success: true });
+      }
+    );
+  } else {
+    connection.query(
+      sqlWithoutPic,
+      [u_nick, u_desc, user_no],
+      (err) => {
+        if (err) return res.status(500).json({ error: '프로필 수정 실패' });
+        return res.json({ success: true });
+      }
+    );
+  }
+});
+
+
 module.exports = router;
