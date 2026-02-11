@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-02-09 09:24
+-- 생성 시간: 26-02-11 05:53
 -- 서버 버전: 10.4.32-MariaDB
 -- PHP 버전: 8.0.30
 
@@ -100,7 +100,7 @@ CREATE TABLE `board_meetup` (
   `bm_desc` text NOT NULL COMMENT '본문글',
   `bm_m_date` date NOT NULL COMMENT '탐방 날짜',
   `bm_m_res` varchar(100) NOT NULL COMMENT '탐방 맛집명',
-  `bm_m_people` int(10) UNSIGNED DEFAULT 0 COMMENT '신청 인원수',
+  `bm_m_people` int(10) UNSIGNED DEFAULT 1 COMMENT '신청 인원수',
   `bm_m_people_all` int(10) UNSIGNED NOT NULL COMMENT '정원(전체 인원)',
   `bm_heart` int(10) UNSIGNED DEFAULT 0 COMMENT '하트 수',
   `bm_comment` int(10) UNSIGNED DEFAULT 0 COMMENT '댓글 수',
