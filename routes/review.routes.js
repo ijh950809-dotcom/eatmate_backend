@@ -76,7 +76,8 @@ router.get('/review', (req, res) => {
 });
 
 
-/*** [맛집 리뷰 - 상세] 조회 review/detail ***/
+/*** [맛집 리뷰 - 상세] review/detail ***/
+// 조회
 router.post('/review/detail/:br_no', (req, res) => {
   const { br_no } = req.params;
 
@@ -94,6 +95,20 @@ router.post('/review/detail/:br_no', (req, res) => {
       res.json(result[0]);
     }
   );
+})
+
+// 삭제
+router.delete('/review/detail/:br_no', (req, res) => {
+  const { br_no } = req.params;
+
+  connection.query(
+    'DELETE From board_review WHERE br_no = ?',
+    [br_no],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: 'DB 삭제 오류' });
+      res.json({ message: '삭제 완료' });
+    }
+  )
 })
 
 /*** [맛집 - 목록] 조회 review/restaurant ***/
