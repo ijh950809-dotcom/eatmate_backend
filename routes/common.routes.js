@@ -1,6 +1,20 @@
 const router = require('express').Router();
 const connection = require('../config/db');
 
+/*** 헤더(header) ***/
+router.get('/user/:token_no', (req, res) => {
+  const token_no = req.params.token_no;
+
+  connection.query(
+    'SELECT * FROM users WHERE u_no = ?',
+    [token_no],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: 'DB 조회 오류' });
+      res.json(result[0]);
+    }
+  )
+})
+
 /*** 댓글 영역 ***/
 // 댓글 출력
 router.post('/common/chat', (req, res) => {
@@ -100,7 +114,6 @@ router.post('/comment', (req, res) => {
     );
   });
 });
-
 
 /*** 하트 출력 ***/
 // board_review/board_meetup/board_community 테이블의 하트 수 업데이트
