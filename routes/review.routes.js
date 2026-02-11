@@ -216,15 +216,25 @@ router.get('/restaurant/detail/:rt_no', (req, res) => {
 })
 
 // 저장(bookmark)
+// 북마크 여부 조회
+router.get('/bookmark/check', (req, res) => {
+  const { user_no, rt_no } = req.query;
+
+  const sql = 'SELECT 1 FROM bookmark WHERE bk_user_no = ? AND bk_rt_no = ? LIMIT 1';
+  connection.query(sql, [user_no, rt_no], (err, rows) => {
+    if (err) return res.status(500).json({ error: 'DB 조회 오류' });
+    res.json({ isBookmarked: rows.length > 0 });
+  });
+});
+
+// 북마크 실행
 router.post('/bookmark', (req, res) => {
   const { bk_user_no, bk_rt_no, toggle } = req.body;
 
   const sql =
     toggle
-      ?
-      'INSERT INTO bookmark(bk_user_no, bk_rt_no) VALUES(?, ?)'
-      :
-      'DELETE FROM bookmark WHERE bk_user_no = ? && bk_rt_no = ?'
+      ? 'INSERT IGNORE INTO bookmark(bk_user_no, bk_rt_no) VALUES(?, ?)'
+      : 'DELETE FROM bookmark WHERE bk_user_no = ? AND bk_rt_no = ?'
 
   connection.query(sql, [bk_user_no, bk_rt_no], (err, result) => {
     if (err) {
