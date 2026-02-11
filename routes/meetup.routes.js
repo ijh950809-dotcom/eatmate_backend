@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { SECRET_KEY } = require('../config/jwt');
 const multer = require('multer');
 const path = require('path');
+const authMiddleware = require('../config/authMiddleware');
 
 
 // 맛집 탐방 meetup - 목록 조회
@@ -103,7 +104,7 @@ const upload = multer({
 });
 
 // 맛집 탐방 meetup - 게시물 등록
-router.post('/meetup', upload.single('bm_img'), (req, res) => {
+router.post('/meetup', authMiddleware, upload.single('bm_img'), (req, res) => {
   const { bm_user_no, bm_m_res, bm_title, bm_desc, bm_m_date, bm_m_people_all } = req.body;
   const bm_img = req.file ? req.file.filename : null;
 
